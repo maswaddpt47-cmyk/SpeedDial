@@ -801,51 +801,65 @@ function bindDragDrop() {
 
   // ── TILES ──
   container.querySelectorAll('.tile[data-tile-id]').forEach(el => {
+
     el.addEventListener('dragstart', e => {
+      e.stopPropagation(); // empêche le bubble vers .category
       dragTileId = el.dataset.tileId;
       dragCatId  = null;
-      didDrag    = true;
-      setTimeout(() => el.classList.add('tile-dragging'), 0);
+      // S'assurer qu'aucune section n'est draggable
+      container.querySelectorAll('.category').forEach(s => s.draggable = false);
+      e.dataTransfer.setData('text/plain', dragTileId);
       e.dataTransfer.effectAllowed = 'move';
+      setTimeout(() => el.classList.add('tile-dragging'), 0);
     });
-    el.addEventListener('dragend', () => {
+
+    el.addEventListener('dragend', e => {
+      e.stopPropagation();
       el.classList.remove('tile-dragging');
       clearTileHighlights();
-      dragTileId = null;
-      setTimeout(() => { didDrag = false; }, 50);
+      setTimeout(() => { dragTileId = null; didDrag = false; }, 50);
     });
-    el.addEventListener('click', e => {
-      if (didDrag) { e.preventDefault(); e.stopPropagation(); }
-    });
+
     el.addEventListener('dragover', e => {
       if (!dragTileId) return;
       e.preventDefault();
+      e.stopPropagation();
       clearTileHighlights();
       const rect = el.getBoundingClientRect();
-      const mid  = rect.left + rect.width / 2;
-      el.classList.add(e.clientX < mid ? 'drop-before' : 'drop-after');
+      el.classList.add(e.clientX < rect.left + rect.width / 2 ? 'drop-before' : 'drop-after');
     });
-    el.addEventListener('dragleave', () => clearTileHighlights());
+
+    el.addEventListener('dragleave', e => {
+      e.stopPropagation();
+      el.classList.remove('drop-before', 'drop-after');
+    });
+
     el.addEventListener('drop', e => {
       e.preventDefault();
-      if (!dragTileId || dragTileId === el.dataset.tileId) { clearTileHighlights(); return; }
-      const rect    = el.getBoundingClientRect();
-      const before  = e.clientX < rect.left + rect.width / 2;
+      e.stopPropagation();
+      clearTileHighlights();
       const targetId = el.dataset.tileId;
+      if (!dragTileId || dragTileId === targetId) return;
+
+      const rect   = el.getBoundingClientRect();
+      const before = e.clientX < rect.left + rect.width / 2;
       const targetCat = data.tiles.find(t => t.id === targetId).cat;
 
-      // Déplace la tuile dans data.tiles
       const fromIdx = data.tiles.findIndex(t => t.id === dragTileId);
       const [moved] = data.tiles.splice(fromIdx, 1);
       moved.cat = targetCat;
       const toIdx = data.tiles.findIndex(t => t.id === targetId);
       data.tiles.splice(before ? toIdx : toIdx + 1, 0, moved);
-
       save(); render();
+    });
+
+    // Bloquer le clic si c'était un vrai drag
+    el.addEventListener('click', e => {
+      if (didDrag) { e.preventDefault(); e.stopPropagation(); }
     });
   });
 
-  // Drop sur la zone vide d'un grid (tuile dans catégorie vide)
+  // Drop sur grid vide (déplacer dans une catégorie sans tuiles)
   container.querySelectorAll('.tiles').forEach(grid => {
     grid.addEventListener('dragover', e => {
       if (!dragTileId) return;
@@ -853,34 +867,34 @@ function bindDragDrop() {
     });
     grid.addEventListener('drop', e => {
       if (!dragTileId) return;
+      const onTile = e.target.closest('.tile[data-tile-id]');
+      if (onTile) return; // géré par le tile lui-même
       const catId = grid.id.replace('tiles-', '');
       const tile  = data.tiles.find(t => t.id === dragTileId);
-      if (tile && tile.cat !== catId) {
-        // aucune tuile cible : on met à la fin
-        const onTile = e.target.closest('.tile[data-tile-id]');
-        if (!onTile) { tile.cat = catId; save(); render(); }
-      }
+      if (tile) { tile.cat = catId; save(); render(); }
     });
   });
 
   // ── CATEGORIES ──
   container.querySelectorAll('[data-cat-handle]').forEach(handle => {
     const sec = handle.closest('.category');
+
     handle.addEventListener('mousedown', () => { sec.draggable = true; });
-    handle.addEventListener('mouseleave', () => {
-      if (!dragCatId) sec.draggable = false;
-    });
+    handle.addEventListener('mouseup',   () => { if (!dragCatId) sec.draggable = false; });
   });
 
   container.querySelectorAll('.category').forEach(sec => {
+
     sec.addEventListener('dragstart', e => {
       if (!sec.draggable) { e.preventDefault(); return; }
       dragCatId  = sec.dataset.catId;
       dragTileId = null;
       didDrag    = true;
-      setTimeout(() => sec.classList.add('cat-dragging'), 0);
+      e.dataTransfer.setData('text/plain', dragCatId);
       e.dataTransfer.effectAllowed = 'move';
+      setTimeout(() => sec.classList.add('cat-dragging'), 0);
     });
+
     sec.addEventListener('dragend', () => {
       sec.draggable = false;
       sec.classList.remove('cat-dragging');
@@ -888,14 +902,17 @@ function bindDragDrop() {
       dragCatId = null;
       setTimeout(() => { didDrag = false; }, 50);
     });
+
     sec.addEventListener('dragover', e => {
       if (!dragCatId || dragCatId === sec.dataset.catId) return;
-      e.preventDefault(); e.stopPropagation();
+      e.preventDefault();
       clearCatHighlights();
       const rect = sec.getBoundingClientRect();
       sec.classList.add(e.clientY < rect.top + rect.height / 2 ? 'cat-drop-before' : 'cat-drop-after');
     });
+
     sec.addEventListener('dragleave', () => clearCatHighlights());
+
     sec.addEventListener('drop', e => {
       e.preventDefault();
       if (!dragCatId || dragCatId === sec.dataset.catId) { clearCatHighlights(); return; }
