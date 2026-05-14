@@ -220,6 +220,15 @@
     color: #fff;
     flex-shrink: 0;
   }
+  .tile-preview {
+    width: 100%;
+    height: 80px;
+    border-radius: 8px;
+    object-fit: cover;
+    object-position: top;
+    background: var(--surface2);
+    display: block;
+  }
 
   .tile-title {
     font-size: 12px;
@@ -417,6 +426,17 @@
       <label>Catégorie</label>
       <select id="tileCatSelect"></select>
     </div>
+    <div class="form-group">
+      <label>Image d'aperçu <span style="color:var(--muted);font-weight:400">(optionnel — screenshot, logo…)</span></label>
+      <div id="tileImgPreviewWrap" style="display:none;margin-bottom:8px;position:relative;">
+        <img id="tileImgPreview" style="width:100%;height:90px;object-fit:cover;object-position:top;border-radius:8px;border:1px solid var(--border);">
+        <button onclick="clearTileImg()" style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,0.6);border:none;color:#fff;border-radius:6px;width:22px;height:22px;cursor:pointer;font-size:12px;">✕</button>
+      </div>
+      <label class="btn btn-ghost" style="cursor:pointer;width:100%;justify-content:center;">
+        📁 Choisir une image
+        <input type="file" id="tileImgInput" accept="image/*" style="display:none" onchange="previewTileImg(event)">
+      </label>
+    </div>
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="closeTileModal()">Annuler</button>
       <button class="btn btn-danger" id="tileDeleteBtn" onclick="deleteCurrentTile()" style="display:none">Supprimer</button>
@@ -535,10 +555,12 @@ function render() {
       a.dataset.tileId = tile.id;
 
       const faviconUrl = getFaviconUrl(tile.url);
-      const imgOrFallback = faviconUrl
-        ? `<img class="tile-favicon" src="${faviconUrl}" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
-          + `<div class="tile-favicon-fallback" style="display:none">${domainInitial(tile.name)}</div>`
-        : `<div class="tile-favicon-fallback">${domainInitial(tile.name)}</div>`;
+      const imgOrFallback = tile.img
+        ? `<img class="tile-preview" src="${tile.img}" alt="">`
+        : faviconUrl
+          ? `<img class="tile-favicon" src="${faviconUrl}" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+            + `<div class="tile-favicon-fallback" style="display:none">${domainInitial(tile.name)}</div>`
+          : `<div class="tile-favicon-fallback">${domainInitial(tile.name)}</div>`;
 
       a.innerHTML = `
         ${imgOrFallback}
@@ -572,8 +594,40 @@ document.getElementById('searchInput').addEventListener('keydown', e => {
 });
 
 // ── TILE MODAL ────────────────────────────────────────
-let currentTileId = null;
+let currentTileId  = null;
 let currentTileCat = null;
+let currentTileImg = null;
+
+function previewTileImg(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    // Redimensionner via canvas pour limiter la taille en localStorage
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const MAX_W = 400, MAX_H = 240;
+      let w = img.width, h = img.height;
+      if (w > MAX_W) { h = Math.round(h * MAX_W / w); w = MAX_W; }
+      if (h > MAX_H) { w = Math.round(w * MAX_H / h); h = MAX_H; }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      currentTileImg = canvas.toDataURL('image/jpeg', 0.82);
+      document.getElementById('tileImgPreview').src = currentTileImg;
+      document.getElementById('tileImgPreviewWrap').style.display = 'block';
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+  e.target.value = '';
+}
+
+function clearTileImg() {
+  currentTileImg = null;
+  document.getElementById('tileImgPreview').src = '';
+  document.getElementById('tileImgPreviewWrap').style.display = 'none';
+}
 
 function openTileModal(tileId, catId) {
   currentTileId = tileId;
@@ -591,12 +645,21 @@ function openTileModal(tileId, catId) {
     document.getElementById('tileUrlInput').value = tile.url;
     select.value = tile.cat;
     document.getElementById('tileDeleteBtn').style.display = 'inline-flex';
+    // Image
+    if (tile.img) {
+      currentTileImg = tile.img;
+      document.getElementById('tileImgPreview').src = tile.img;
+      document.getElementById('tileImgPreviewWrap').style.display = 'block';
+    } else {
+      clearTileImg();
+    }
   } else {
     document.getElementById('tileModalTitle').textContent = 'Nouveau raccourci';
     document.getElementById('tileNameInput').value = '';
     document.getElementById('tileUrlInput').value = '';
     if (catId) select.value = catId;
     document.getElementById('tileDeleteBtn').style.display = 'none';
+    clearTileImg();
   }
 
   document.getElementById('tileModal').classList.add('open');
@@ -624,8 +687,9 @@ function saveTile() {
   if (currentTileId) {
     const tile = data.tiles.find(t => t.id === currentTileId);
     tile.name = name; tile.url = url; tile.cat = cat;
+    tile.img = currentTileImg || null;
   } else {
-    data.tiles.push({ id: 't' + Date.now(), name, url, cat });
+    data.tiles.push({ id: 't' + Date.now(), name, url, cat, img: currentTileImg || null });
   }
 
   save(); render(); closeTileModal();
