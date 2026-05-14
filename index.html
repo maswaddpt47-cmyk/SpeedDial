@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Speed Dial</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --border: rgba(255,255,255,0.07);
+    --accent: #4f8ef7;
+    --accent2: #7c5cfc;
+    --text: #e8eaf2;
+    --muted: #6b7280;
+    --danger: #f75f5f;
+    --success: #4fcb8d;
+    --radius: 14px;
+    --shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 20% -10%, rgba(79,142,247,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 110%, rgba(124,92,252,0.10) 0%, transparent 60%);
+  }
+
+  /* ── HEADER ── */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 32px 0;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    backdrop-filter: blur(12px);
+    background: rgba(15,17,23,0.7);
+  }
+
+  .logo {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+  .logo span { color: var(--accent); }
+
+  .search-wrap {
+    flex: 1;
+    max-width: 480px;
+    margin: 0 24px;
+    position: relative;
+  }
+  .search-wrap input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 40px;
+    padding: 10px 20px 10px 44px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .search-wrap input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(79,142,247,0.15);
+  }
+  .search-wrap input::placeholder { color: var(--muted); }
+  .search-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-size: 15px;
+  }
+
+  .header-actions { display: flex; gap: 8px; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.18s;
+  }
+  .btn-ghost {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { background: var(--surface); color: var(--text); }
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+  }
+  .btn-primary:hover { filter: brightness(1.12); transform: translateY(-1px); }
+  .btn-danger { background: var(--danger); color: #fff; }
+  .btn-danger:hover { filter: brightness(1.1); }
+
+  /* ── MAIN ── */
+  main { padding: 28px 32px 60px; }
+
+  .date-line {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 28px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* ── CATEGORIES ── */
+  .categories { display: flex; flex-direction: column; gap: 32px; }
+
+  .category {}
+  .category-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .category-name {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+  }
+  .category-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .cat-actions { display: flex; gap: 6px; }
+  .cat-btn {
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 13px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    transition: color 0.15s, background 0.15s;
+  }
+  .cat-btn:hover { color: var(--text); background: var(--surface); }
+  .cat-btn.danger:hover { color: var(--danger); }
+
+  /* ── TILES GRID ── */
+  .tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 12px;
+  }
+
+  .tile {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 12px 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    text-decoration: none;
+    color: var(--text);
+    position: relative;
+    transition: transform 0.18s, border-color 0.18s, box-shadow 0.18s;
+    overflow: hidden;
+  }
+  .tile::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .tile:hover {
+    transform: translateY(-3px);
+    border-color: rgba(79,142,247,0.35);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.35);
+  }
+
+  .tile-favicon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    object-fit: contain;
+    background: var(--surface2);
+    padding: 6px;
+  }
+  .tile-favicon-fallback {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 16px;
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  .tile-title {
+    font-size: 12px;
+    font-weight: 500;
+    text-align: center;
+    line-height: 1.3;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
+    color: var(--text);
+  }
+
+  .tile-edit-btn {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    background: rgba(0,0,0,0.5);
+    border: none;
+    color: var(--muted);
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 11px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.15s;
+  }
+  .tile:hover .tile-edit-btn { display: flex; }
+  .tile-edit-btn:hover { color: var(--accent); }
+
+  /* ── ADD TILE BUTTON ── */
+  .tile-add {
+    background: transparent;
+    border: 1px dashed rgba(255,255,255,0.12);
+    border-radius: var(--radius);
+    padding: 18px 12px 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    color: var(--muted);
+    min-height: 100px;
+    transition: all 0.18s;
+    font-size: 12px;
+  }
+  .tile-add:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(79,142,247,0.05);
+  }
+  .tile-add-icon { font-size: 22px; }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.65);
+    backdrop-filter: blur(6px);
+    z-index: 100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 18px;
+    padding: 28px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: var(--shadow);
+    animation: modalIn 0.22s ease;
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: translateY(12px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .modal h2 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: var(--text);
+  }
+
+  .form-group { margin-bottom: 14px; }
+  .form-group label {
+    display: block;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 6px;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+  }
+  .form-group input, .form-group select {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.18s;
+  }
+  .form-group input:focus, .form-group select:focus {
+    border-color: var(--accent);
+  }
+  .form-group select option { background: var(--surface); }
+
+  .modal-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 22px;
+  }
+
+  /* ── CATEGORY MODAL ── */
+  .empty-state {
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+    padding: 40px 0;
+  }
+
+  /* ── DRAG & DROP ── */
+  .drag-handle {
+    cursor: grab;
+    color: var(--muted);
+    padding: 2px 8px;
+    font-size: 14px;
+    border-radius: 4px;
+    transition: color 0.15s, background 0.15s;
+    user-select: none;
+  }
+  .drag-handle:hover { color: var(--text); background: var(--surface); }
+  .drag-handle:active { cursor: grabbing; }
+
+  .tile.tile-dragging { opacity: 0.3; transform: scale(0.93); }
+  .tile.drop-before { box-shadow: -3px 0 0 0 var(--accent) !important; }
+  .tile.drop-after  { box-shadow:  3px 0 0 0 var(--accent) !important; }
+
+  .category.cat-dragging { opacity: 0.3; }
+  .category.cat-drop-before { border-top: 2px solid var(--accent); margin-top: -2px; }
+  .category.cat-drop-after  { border-bottom: 2px solid var(--accent); }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">SPEED<span>//</span>DIAL</div>
+  <div class="search-wrap">
+    <span class="search-icon">⌕</span>
+    <input type="text" id="searchInput" placeholder="Rechercher sur Google…" autocomplete="off">
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-ghost" onclick="openCatModal()">+ Catégorie</button>
+    <button class="btn btn-ghost" id="exportBtn" onclick="exportData()">↓ Export</button>
+    <label class="btn btn-ghost" style="cursor:pointer">↑ Import<input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)"></label>
+  </div>
+</header>
+
+<main>
+  <div class="date-line" id="dateLine"></div>
+  <div class="categories" id="categoriesContainer"></div>
+</main>
+
+<!-- Modal Tile -->
+<div class="modal-overlay" id="tileModal">
+  <div class="modal">
+    <h2 id="tileModalTitle">Nouveau raccourci</h2>
+    <div class="form-group">
+      <label>Nom</label>
+      <input type="text" id="tileNameInput" placeholder="Ex: Crédit Agricole">
+    </div>
+    <div class="form-group">
+      <label>URL</label>
+      <input type="text" id="tileUrlInput" placeholder="https://...">
+    </div>
+    <div class="form-group">
+      <label>Catégorie</label>
+      <select id="tileCatSelect"></select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeTileModal()">Annuler</button>
+      <button class="btn btn-danger" id="tileDeleteBtn" onclick="deleteCurrentTile()" style="display:none">Supprimer</button>
+      <button class="btn btn-primary" onclick="saveTile()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Catégorie -->
+<div class="modal-overlay" id="catModal">
+  <div class="modal">
+    <h2 id="catModalTitle">Nouvelle catégorie</h2>
+    <div class="form-group">
+      <label>Nom</label>
+      <input type="text" id="catNameInput" placeholder="Ex: Banques">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeCatModal()">Annuler</button>
+      <button class="btn btn-danger" id="catDeleteBtn" onclick="deleteCurrentCat()" style="display:none">Supprimer</button>
+      <button class="btn btn-primary" onclick="saveCat()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────
+const DEFAULT = {
+  categories: [
+    { id: 'cd47', name: 'CD47 — Outils' },
+    { id: 'banques', name: 'Banques' },
+    { id: 'telecom', name: 'Télécom' },
+    { id: 'energie', name: 'Énergie' },
+    { id: 'perso', name: 'Perso' },
+  ],
+  tiles: [
+    { id: 'cd1', name: 'Ateliers NumériQues', url: 'https://maswaddpt47-cmyk.github.io/ateliers-cd47_NextStep/', cat: 'cd47' },
+    { id: 'cd2', name: 'Ateliers — Admin', url: 'https://maswaddpt47-cmyk.github.io/ateliers-cd47_NextStep/admin_v9.3.html', cat: 'cd47' },
+    { id: 'cd3', name: 'CR Réunion Équipe', url: 'https://maswaddpt47-cmyk.github.io/CRConum-V10', cat: 'cd47' },
+    { id: 'cd4', name: 'Générateur SMS & Mail', url: 'https://maswaddpt47-cmyk.github.io/SMS-mail/', cat: 'cd47' },
+    { id: 't1', name: 'Crédit Agricole', url: 'https://www.credit-agricole.fr', cat: 'banques' },
+    { id: 't2', name: 'Nickel', url: 'https://www.compte-nickel.fr', cat: 'banques' },
+    { id: 't3', name: 'Hello Bank', url: 'https://www.hellobank.fr', cat: 'banques' },
+    { id: 't4', name: 'Monabanq', url: 'https://www.monabanq.com', cat: 'banques' },
+    { id: 't5', name: 'Bouygues', url: 'https://www.bouyguestelecom.fr', cat: 'telecom' },
+    { id: 't6', name: 'Free Mobile', url: 'https://mobile.free.fr', cat: 'telecom' },
+    { id: 't7', name: 'Freebox', url: 'https://subscribe.free.fr/login', cat: 'telecom' },
+    { id: 't8', name: 'Orange', url: 'https://www.orange.fr', cat: 'telecom' },
+    { id: 't9', name: 'EDF', url: 'https://particulier.edf.fr', cat: 'energie' },
+    { id: 't10', name: 'Enedis', url: 'https://www.enedis.fr', cat: 'energie' },
+    { id: 't11', name: 'Saur', url: 'https://www.saur.com', cat: 'energie' },
+    { id: 't12', name: 'Amazon', url: 'https://www.amazon.fr', cat: 'perso' },
+    { id: 't13', name: 'LinkedIn', url: 'https://www.linkedin.com', cat: 'perso' },
+  ]
+};
+
+let data = JSON.parse(localStorage.getItem('speeddial_data') || 'null') || DEFAULT;
+
+function save() {
+  localStorage.setItem('speeddial_data', JSON.stringify(data));
+}
+
+// ── DATE ──────────────────────────────────────────────
+function setDate() {
+  const d = new Date();
+  const opts = { weekday:'long', day:'numeric', month:'long', year:'numeric' };
+  document.getElementById('dateLine').textContent =
+    d.toLocaleDateString('fr-FR', opts);
+}
+
+// ── FAVICON ───────────────────────────────────────────
+function getFaviconUrl(url) {
+  try {
+    const domain = new URL(url).hostname;
+    return `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+  } catch { return null; }
+}
+
+function domainInitial(name) {
+  return name.trim().charAt(0).toUpperCase();
+}
+
+// ── RENDER ────────────────────────────────────────────
+function render() {
+  const container = document.getElementById('categoriesContainer');
+  container.innerHTML = '';
+
+  data.categories.forEach(cat => {
+    const tiles = data.tiles.filter(t => t.cat === cat.id);
+
+    const sec = document.createElement('div');
+    sec.className = 'category';
+    sec.dataset.catId = cat.id;
+    sec.innerHTML = `
+      <div class="category-header">
+        <span class="drag-handle" data-cat-handle="${cat.id}" title="Glisser pour réordonner">⠿</span>
+        <span class="category-name">${cat.name}</span>
+        <div class="category-line"></div>
+        <div class="cat-actions">
+          <button class="cat-btn" title="Renommer" onclick="editCat('${cat.id}')">✎</button>
+          <button class="cat-btn danger" title="Supprimer" onclick="promptDeleteCat('${cat.id}')">✕</button>
+        </div>
+      </div>
+      <div class="tiles" id="tiles-${cat.id}"></div>
+    `;
+    container.appendChild(sec);
+
+    const grid = sec.querySelector(`#tiles-${cat.id}`);
+
+    tiles.forEach(tile => {
+      const a = document.createElement('a');
+      a.className = 'tile';
+      a.href = tile.url;
+      a.target = '_blank';
+      a.rel = 'noopener';
+      a.draggable = true;
+      a.dataset.tileId = tile.id;
+
+      const faviconUrl = getFaviconUrl(tile.url);
+      const imgOrFallback = faviconUrl
+        ? `<img class="tile-favicon" src="${faviconUrl}" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+          + `<div class="tile-favicon-fallback" style="display:none">${domainInitial(tile.name)}</div>`
+        : `<div class="tile-favicon-fallback">${domainInitial(tile.name)}</div>`;
+
+      a.innerHTML = `
+        ${imgOrFallback}
+        <span class="tile-title">${tile.name}</span>
+        <button class="tile-edit-btn" title="Modifier" onclick="editTile(event,'${tile.id}')">✎</button>
+      `;
+      grid.appendChild(a);
+    });
+
+    // Bouton +
+    const addBtn = document.createElement('button');
+    addBtn.className = 'tile-add';
+    addBtn.innerHTML = `<span class="tile-add-icon">+</span><span>Ajouter</span>`;
+    addBtn.onclick = () => openTileModal(null, cat.id);
+    grid.appendChild(addBtn);
+  });
+
+  if (data.categories.length === 0) {
+    container.innerHTML = `<div class="empty-state">Aucune catégorie — clique sur "+ Catégorie" pour commencer.</div>`;
+  }
+
+  bindDragDrop();
+}
+
+// ── SEARCH ────────────────────────────────────────────
+document.getElementById('searchInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const q = e.target.value.trim();
+    if (q) window.open(`https://www.google.com/search?q=${encodeURIComponent(q)}`, '_blank');
+  }
+});
+
+// ── TILE MODAL ────────────────────────────────────────
+let currentTileId = null;
+let currentTileCat = null;
+
+function openTileModal(tileId, catId) {
+  currentTileId = tileId;
+  currentTileCat = catId;
+
+  const select = document.getElementById('tileCatSelect');
+  select.innerHTML = data.categories.map(c =>
+    `<option value="${c.id}">${c.name}</option>`
+  ).join('');
+
+  if (tileId) {
+    const tile = data.tiles.find(t => t.id === tileId);
+    document.getElementById('tileModalTitle').textContent = 'Modifier le raccourci';
+    document.getElementById('tileNameInput').value = tile.name;
+    document.getElementById('tileUrlInput').value = tile.url;
+    select.value = tile.cat;
+    document.getElementById('tileDeleteBtn').style.display = 'inline-flex';
+  } else {
+    document.getElementById('tileModalTitle').textContent = 'Nouveau raccourci';
+    document.getElementById('tileNameInput').value = '';
+    document.getElementById('tileUrlInput').value = '';
+    if (catId) select.value = catId;
+    document.getElementById('tileDeleteBtn').style.display = 'none';
+  }
+
+  document.getElementById('tileModal').classList.add('open');
+  setTimeout(() => document.getElementById('tileNameInput').focus(), 80);
+}
+
+function closeTileModal() {
+  document.getElementById('tileModal').classList.remove('open');
+}
+
+function editTile(e, tileId) {
+  e.preventDefault();
+  e.stopPropagation();
+  openTileModal(tileId, null);
+}
+
+function saveTile() {
+  const name = document.getElementById('tileNameInput').value.trim();
+  let url = document.getElementById('tileUrlInput').value.trim();
+  const cat = document.getElementById('tileCatSelect').value;
+
+  if (!name || !url) return;
+  if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+
+  if (currentTileId) {
+    const tile = data.tiles.find(t => t.id === currentTileId);
+    tile.name = name; tile.url = url; tile.cat = cat;
+  } else {
+    data.tiles.push({ id: 't' + Date.now(), name, url, cat });
+  }
+
+  save(); render(); closeTileModal();
+}
+
+function deleteCurrentTile() {
+  if (!currentTileId) return;
+  if (!confirm('Supprimer ce raccourci ?')) return;
+  data.tiles = data.tiles.filter(t => t.id !== currentTileId);
+  save(); render(); closeTileModal();
+}
+
+// ── CATEGORY MODAL ────────────────────────────────────
+let currentCatId = null;
+
+function openCatModal() {
+  currentCatId = null;
+  document.getElementById('catModalTitle').textContent = 'Nouvelle catégorie';
+  document.getElementById('catNameInput').value = '';
+  document.getElementById('catDeleteBtn').style.display = 'none';
+  document.getElementById('catModal').classList.add('open');
+  setTimeout(() => document.getElementById('catNameInput').focus(), 80);
+}
+
+function closeCatModal() {
+  document.getElementById('catModal').classList.remove('open');
+}
+
+function editCat(catId) {
+  currentCatId = catId;
+  const cat = data.categories.find(c => c.id === catId);
+  document.getElementById('catModalTitle').textContent = 'Renommer la catégorie';
+  document.getElementById('catNameInput').value = cat.name;
+  document.getElementById('catDeleteBtn').style.display = 'inline-flex';
+  document.getElementById('catModal').classList.add('open');
+  setTimeout(() => document.getElementById('catNameInput').focus(), 80);
+}
+
+function saveCat() {
+  const name = document.getElementById('catNameInput').value.trim();
+  if (!name) return;
+
+  if (currentCatId) {
+    data.categories.find(c => c.id === currentCatId).name = name;
+  } else {
+    const id = 'cat_' + Date.now();
+    data.categories.push({ id, name });
+  }
+
+  save(); render(); closeCatModal();
+}
+
+function promptDeleteCat(catId) {
+  currentCatId = catId;
+  editCat(catId);
+}
+
+function deleteCurrentCat() {
+  if (!currentCatId) return;
+  const hasTiles = data.tiles.some(t => t.cat === currentCatId);
+  if (hasTiles && !confirm('Cette catégorie contient des raccourcis. Tout supprimer ?')) return;
+  if (!hasTiles && !confirm('Supprimer cette catégorie ?')) return;
+  data.categories = data.categories.filter(c => c.id !== currentCatId);
+  data.tiles = data.tiles.filter(t => t.cat !== currentCatId);
+  save(); render(); closeCatModal();
+}
+
+// ── IMPORT / EXPORT ───────────────────────────────────
+function exportData() {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'speeddial_backup.json';
+  a.click();
+}
+
+function importData(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const imported = JSON.parse(ev.target.result);
+      if (imported.categories && imported.tiles) {
+        data = imported;
+        save(); render();
+      } else { alert('Fichier invalide.'); }
+    } catch { alert('Erreur de lecture.'); }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+
+// ── FERMER MODALS SUR CLIC OVERLAY ───────────────────
+document.getElementById('tileModal').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeTileModal();
+});
+document.getElementById('catModal').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeCatModal();
+});
+
+// ── DRAG & DROP ───────────────────────────────────────
+let dragTileId = null;
+let dragCatId  = null;
+let didDrag    = false;
+
+function bindDragDrop() {
+  const container = document.getElementById('categoriesContainer');
+
+  // ── TILES ──
+  container.querySelectorAll('.tile[data-tile-id]').forEach(el => {
+    el.addEventListener('dragstart', e => {
+      dragTileId = el.dataset.tileId;
+      dragCatId  = null;
+      didDrag    = true;
+      setTimeout(() => el.classList.add('tile-dragging'), 0);
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    el.addEventListener('dragend', () => {
+      el.classList.remove('tile-dragging');
+      clearTileHighlights();
+      dragTileId = null;
+      setTimeout(() => { didDrag = false; }, 50);
+    });
+    el.addEventListener('click', e => {
+      if (didDrag) { e.preventDefault(); e.stopPropagation(); }
+    });
+    el.addEventListener('dragover', e => {
+      if (!dragTileId) return;
+      e.preventDefault();
+      clearTileHighlights();
+      const rect = el.getBoundingClientRect();
+      const mid  = rect.left + rect.width / 2;
+      el.classList.add(e.clientX < mid ? 'drop-before' : 'drop-after');
+    });
+    el.addEventListener('dragleave', () => clearTileHighlights());
+    el.addEventListener('drop', e => {
+      e.preventDefault();
+      if (!dragTileId || dragTileId === el.dataset.tileId) { clearTileHighlights(); return; }
+      const rect    = el.getBoundingClientRect();
+      const before  = e.clientX < rect.left + rect.width / 2;
+      const targetId = el.dataset.tileId;
+      const targetCat = data.tiles.find(t => t.id === targetId).cat;
+
+      // Déplace la tuile dans data.tiles
+      const fromIdx = data.tiles.findIndex(t => t.id === dragTileId);
+      const [moved] = data.tiles.splice(fromIdx, 1);
+      moved.cat = targetCat;
+      const toIdx = data.tiles.findIndex(t => t.id === targetId);
+      data.tiles.splice(before ? toIdx : toIdx + 1, 0, moved);
+
+      save(); render();
+    });
+  });
+
+  // Drop sur la zone vide d'un grid (tuile dans catégorie vide)
+  container.querySelectorAll('.tiles').forEach(grid => {
+    grid.addEventListener('dragover', e => {
+      if (!dragTileId) return;
+      e.preventDefault();
+    });
+    grid.addEventListener('drop', e => {
+      if (!dragTileId) return;
+      const catId = grid.id.replace('tiles-', '');
+      const tile  = data.tiles.find(t => t.id === dragTileId);
+      if (tile && tile.cat !== catId) {
+        // aucune tuile cible : on met à la fin
+        const onTile = e.target.closest('.tile[data-tile-id]');
+        if (!onTile) { tile.cat = catId; save(); render(); }
+      }
+    });
+  });
+
+  // ── CATEGORIES ──
+  container.querySelectorAll('[data-cat-handle]').forEach(handle => {
+    const sec = handle.closest('.category');
+    handle.addEventListener('mousedown', () => { sec.draggable = true; });
+    handle.addEventListener('mouseleave', () => {
+      if (!dragCatId) sec.draggable = false;
+    });
+  });
+
+  container.querySelectorAll('.category').forEach(sec => {
+    sec.addEventListener('dragstart', e => {
+      if (!sec.draggable) { e.preventDefault(); return; }
+      dragCatId  = sec.dataset.catId;
+      dragTileId = null;
+      didDrag    = true;
+      setTimeout(() => sec.classList.add('cat-dragging'), 0);
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    sec.addEventListener('dragend', () => {
+      sec.draggable = false;
+      sec.classList.remove('cat-dragging');
+      clearCatHighlights();
+      dragCatId = null;
+      setTimeout(() => { didDrag = false; }, 50);
+    });
+    sec.addEventListener('dragover', e => {
+      if (!dragCatId || dragCatId === sec.dataset.catId) return;
+      e.preventDefault(); e.stopPropagation();
+      clearCatHighlights();
+      const rect = sec.getBoundingClientRect();
+      sec.classList.add(e.clientY < rect.top + rect.height / 2 ? 'cat-drop-before' : 'cat-drop-after');
+    });
+    sec.addEventListener('dragleave', () => clearCatHighlights());
+    sec.addEventListener('drop', e => {
+      e.preventDefault();
+      if (!dragCatId || dragCatId === sec.dataset.catId) { clearCatHighlights(); return; }
+      const rect   = sec.getBoundingClientRect();
+      const before = e.clientY < rect.top + rect.height / 2;
+      const fromIdx = data.categories.findIndex(c => c.id === dragCatId);
+      const [moved] = data.categories.splice(fromIdx, 1);
+      const toIdx   = data.categories.findIndex(c => c.id === sec.dataset.catId);
+      data.categories.splice(before ? toIdx : toIdx + 1, 0, moved);
+      save(); render();
+    });
+  });
+}
+
+function clearTileHighlights() {
+  document.querySelectorAll('.tile').forEach(t => {
+    t.classList.remove('drop-before', 'drop-after');
+  });
+}
+function clearCatHighlights() {
+  document.querySelectorAll('.category').forEach(c => {
+    c.classList.remove('cat-drop-before', 'cat-drop-after');
+  });
+}
+
+// ── INIT ──────────────────────────────────────────────
+setDate();
+render();
+</script>
+</body>
+</html>
