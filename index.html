@@ -83,20 +83,43 @@
 
   .theme-dots {
     display: flex;
-    gap: 6px;
     align-items: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 40px;
+    padding: 4px;
+    gap: 2px;
+    backdrop-filter: var(--blur);
   }
   .theme-dot {
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 32px;
     cursor: pointer;
-    border: 2px solid transparent;
-    transition: transform 0.15s, border-color 0.15s;
-    flex-shrink: 0;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    transition: background 0.18s, color 0.18s;
+    white-space: nowrap;
   }
-  .theme-dot:hover { transform: scale(1.25); }
-  .theme-dot.active { border-color: var(--text); transform: scale(1.15); }
+  .theme-dot:hover { color: var(--text); }
+  .theme-dot.active {
+    background: var(--surface-hover, rgba(255,255,255,0.18));
+    color: var(--text);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+  }
+  .theme-dot-swatch {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: inline-block;
+  }
 
   .header-actions { display: flex; gap: 8px; flex-shrink: 0; }
 
@@ -251,9 +274,12 @@
   /* ── TILES GRID ── */
   .tiles {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+    grid-template-columns: repeat(6, 1fr);
     gap: 14px;
   }
+  @media (max-width: 1100px) { .tiles { grid-template-columns: repeat(5, 1fr); } }
+  @media (max-width: 860px)  { .tiles { grid-template-columns: repeat(4, 1fr); } }
+  @media (max-width: 620px)  { .tiles { grid-template-columns: repeat(3, 1fr); } }
 
   @keyframes tileIn {
     from { opacity: 0; transform: translateY(14px) scale(0.96); }
@@ -610,8 +636,9 @@ function buildThemeDots() {
     const d = document.createElement('button');
     d.className = 'theme-dot' + (id === currentTheme ? ' active' : '');
     d.dataset.theme = id;
-    d.style.background = th.dot;
-    d.title = th.label;
+    d.innerHTML =
+      '<span class="theme-dot-swatch" style="background:' + th.dot + '"></span>' +
+      th.label;
     d.onclick = () => applyTheme(id);
     wrap.appendChild(d);
   });
