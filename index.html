@@ -6,31 +6,46 @@
 <title>Speed Dial</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0f1117;
-    --surface: #1a1d27;
-    --surface2: #22263a;
-    --border: rgba(255,255,255,0.07);
-    --accent: #4f8ef7;
-    --accent2: #7c5cfc;
-    --text: #e8eaf2;
-    --muted: #6b7280;
-    --danger: #f75f5f;
-    --success: #4fcb8d;
-    --radius: 14px;
-    --shadow: 0 8px 32px rgba(0,0,0,0.4);
-  }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
     font-family: 'DM Sans', sans-serif;
-    background: var(--bg);
+    background: var(--bg-base);
     color: var(--text);
     min-height: 100vh;
-    background-image:
-      radial-gradient(ellipse 80% 50% at 20% -10%, rgba(79,142,247,0.12) 0%, transparent 60%),
-      radial-gradient(ellipse 60% 40% at 80% 110%, rgba(124,92,252,0.10) 0%, transparent 60%);
+  }
+  .bg-blobs {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+  .bg-blobs::before, .bg-blobs::after, .bg-blob3 {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+  }
+  .bg-blobs::before {
+    width: 70vw; height: 70vw;
+    top: -20%; left: -15%;
+    background: var(--b1);
+  }
+  .bg-blobs::after {
+    width: 60vw; height: 60vw;
+    bottom: -20%; right: -15%;
+    background: var(--b2);
+  }
+  .bg-blob3 {
+    width: 40vw; height: 40vw;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    background: var(--b3);
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
   }
 
   /* ── HEADER ── */
@@ -38,12 +53,14 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 20px 32px 0;
+    padding: 16px 32px;
     position: sticky;
     top: 0;
-    z-index: 10;
-    backdrop-filter: blur(12px);
-    background: rgba(15,17,23,0.7);
+    z-index: 20;
+    backdrop-filter: var(--blur);
+    background: var(--header-bg);
+    border-bottom: 1px solid var(--border);
+    gap: 16px;
   }
 
   .logo {
@@ -51,48 +68,43 @@
     font-size: 13px;
     color: var(--muted);
     letter-spacing: 0.05em;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
   .logo span { color: var(--accent); }
 
-  .search-wrap {
+  .header-center {
+    display: flex;
+    align-items: center;
+    gap: 12px;
     flex: 1;
-    max-width: 480px;
-    margin: 0 24px;
-    position: relative;
-  }
-  .search-wrap input {
-    width: 100%;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 40px;
-    padding: 10px 20px 10px 44px;
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-  }
-  .search-wrap input:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(79,142,247,0.15);
-  }
-  .search-wrap input::placeholder { color: var(--muted); }
-  .search-icon {
-    position: absolute;
-    left: 16px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--muted);
-    font-size: 15px;
+    justify-content: center;
   }
 
-  .header-actions { display: flex; gap: 8px; }
+  .theme-dots {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .theme-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: transform 0.15s, border-color 0.15s;
+    flex-shrink: 0;
+  }
+  .theme-dot:hover { transform: scale(1.25); }
+  .theme-dot.active { border-color: var(--text); transform: scale(1.15); }
+
+  .header-actions { display: flex; gap: 8px; flex-shrink: 0; }
 
   .btn {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 8px 16px;
+    padding: 8px 14px;
     border-radius: 8px;
     border: none;
     cursor: pointer;
@@ -100,42 +112,115 @@
     font-size: 13px;
     font-weight: 500;
     transition: all 0.18s;
+    white-space: nowrap;
   }
   .btn-ghost {
-    background: transparent;
+    background: var(--surface);
     color: var(--muted);
     border: 1px solid var(--border);
   }
-  .btn-ghost:hover { background: var(--surface); color: var(--text); }
-  .btn-primary {
-    background: var(--accent);
-    color: #fff;
-  }
+  .btn-ghost:hover { background: var(--surface-hover); color: var(--text); }
+  .btn-primary { background: var(--accent); color: #fff; }
   .btn-primary:hover { filter: brightness(1.12); transform: translateY(-1px); }
-  .btn-danger { background: var(--danger); color: #fff; }
+  .btn-danger { background: #f75f5f; color: #fff; }
   .btn-danger:hover { filter: brightness(1.1); }
 
-  /* ── MAIN ── */
-  main { padding: 28px 32px 60px; }
-
-  .date-line {
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 52px 32px 36px;
+  }
+  .hero-greet {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--muted);
+    margin-bottom: 8px;
+    letter-spacing: 0.02em;
+  }
+  .hero-clock {
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(48px, 8vw, 88px);
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    line-height: 1;
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 6px;
+  }
+  .hero-clock-sec {
+    font-size: 0.38em;
+    color: var(--muted);
+    letter-spacing: 0;
+    font-weight: 400;
+    min-width: 2ch;
+  }
+  .hero-date {
     font-family: 'Space Mono', monospace;
     font-size: 11px;
     color: var(--muted);
-    margin-bottom: 28px;
-    letter-spacing: 0.08em;
+    margin-top: 10px;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
+  }
+  .hero-search {
+    margin: 28px auto 0;
+    max-width: 520px;
+    position: relative;
+  }
+  .hero-search input {
+    width: 100%;
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: 40px;
+    padding: 13px 24px 13px 48px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    backdrop-filter: var(--blur);
+  }
+  .hero-search input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent);
+  }
+  .hero-search input::placeholder { color: var(--muted); }
+  .hero-search-icon {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-size: 16px;
+    pointer-events: none;
+  }
+
+  /* ── MAIN ── */
+  main {
+    position: relative;
+    z-index: 1;
+    padding: 8px 32px 80px;
   }
 
   /* ── CATEGORIES ── */
-  .categories { display: flex; flex-direction: column; gap: 32px; }
+  .categories { display: flex; flex-direction: column; gap: 36px; }
 
-  .category {}
   .category-header {
     display: flex;
     align-items: center;
     gap: 10px;
     margin-bottom: 14px;
+  }
+  .cat-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
   }
   .category-name {
     font-family: 'Space Mono', monospace;
@@ -161,95 +246,104 @@
     transition: color 0.15s, background 0.15s;
   }
   .cat-btn:hover { color: var(--text); background: var(--surface); }
-  .cat-btn.danger:hover { color: var(--danger); }
+  .cat-btn.danger:hover { color: #f75f5f; }
 
   /* ── TILES GRID ── */
   .tiles {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
     gap: 14px;
+  }
+
+  @keyframes tileIn {
+    from { opacity: 0; transform: translateY(14px) scale(0.96); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
   }
 
   .tile {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 22px 14px 16px;
+    border-radius: 16px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
+    gap: 0;
     cursor: pointer;
     text-decoration: none;
     color: var(--text);
     position: relative;
-    transition: transform 0.18s, border-color 0.18s, box-shadow 0.18s;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
     overflow: hidden;
+    backdrop-filter: var(--blur);
   }
-  .tile::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, transparent 60%);
-    pointer-events: none;
-  }
+  .tile.animate-in { animation: tileIn 0.32s ease both; }
   .tile:hover {
-    transform: translateY(-3px);
-    border-color: rgba(79,142,247,0.35);
-    box-shadow: 0 12px 28px rgba(0,0,0,0.35);
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: var(--shadow);
+    border-color: var(--accent);
   }
 
-  .tile-favicon {
-    width: 56px;
-    height: 56px;
-    border-radius: 14px;
-    object-fit: contain;
-    background: var(--surface2);
-    padding: 8px;
+  .tile-top {
+    width: 100%;
+    height: 76px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px 14px 0 0;
+    overflow: hidden;
+    flex-shrink: 0;
+    position: relative;
   }
-  .tile-favicon-fallback {
-    width: 56px;
-    height: 56px;
-    border-radius: 14px;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
+  .tile-top img.tile-preview-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+    display: block;
+  }
+  .tile-favicon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    object-fit: contain;
+  }
+  .tile-initial {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.18);
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 700;
-    font-size: 22px;
+    font-size: 20px;
     color: #fff;
-    flex-shrink: 0;
-  }
-  .tile-preview {
-    width: 100%;
-    height: 95px;
-    border-radius: 8px;
-    object-fit: cover;
-    object-position: top;
-    background: var(--surface2);
-    display: block;
   }
 
+  .tile-body {
+    padding: 10px 12px 12px;
+    width: 100%;
+  }
   .tile-title {
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 500;
     text-align: center;
     line-height: 1.3;
-    max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     width: 100%;
     color: var(--text);
+    display: block;
   }
 
   .tile-edit-btn {
     position: absolute;
     top: 6px;
     right: 6px;
-    background: rgba(0,0,0,0.5);
+    background: rgba(0,0,0,0.45);
     border: none;
-    color: var(--muted);
+    color: #fff;
     width: 22px;
     height: 22px;
     border-radius: 6px;
@@ -258,32 +352,33 @@
     display: none;
     align-items: center;
     justify-content: center;
-    transition: color 0.15s;
+    transition: background 0.15s;
+    z-index: 2;
   }
   .tile:hover .tile-edit-btn { display: flex; }
-  .tile-edit-btn:hover { color: var(--accent); }
+  .tile-edit-btn:hover { background: rgba(0,0,0,0.7); }
 
   /* ── ADD TILE BUTTON ── */
   .tile-add {
     background: transparent;
-    border: 1px dashed rgba(255,255,255,0.12);
-    border-radius: var(--radius);
-    padding: 18px 12px 14px;
+    border: 1px dashed var(--border);
+    border-radius: 16px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 6px;
     cursor: pointer;
     color: var(--muted);
-    min-height: 100px;
+    min-height: 116px;
     transition: all 0.18s;
     font-size: 12px;
+    font-family: 'DM Sans', sans-serif;
   }
   .tile-add:hover {
     border-color: var(--accent);
     color: var(--accent);
-    background: rgba(79,142,247,0.05);
+    background: color-mix(in srgb, var(--accent) 6%, transparent);
   }
   .tile-add-icon { font-size: 22px; }
 
@@ -292,7 +387,7 @@
     position: fixed;
     inset: 0;
     background: rgba(0,0,0,0.65);
-    backdrop-filter: blur(6px);
+    backdrop-filter: blur(8px);
     z-index: 100;
     display: none;
     align-items: center;
@@ -300,21 +395,20 @@
   }
   .modal-overlay.open { display: flex; }
 
+  @keyframes modalIn {
+    from { opacity: 0; transform: translateY(16px) scale(0.96); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
   .modal {
-    background: var(--surface);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 18px;
+    background: var(--modal-bg);
+    border: 1px solid var(--border);
+    border-radius: 20px;
     padding: 28px;
     width: 100%;
     max-width: 420px;
     box-shadow: var(--shadow);
     animation: modalIn 0.22s ease;
   }
-  @keyframes modalIn {
-    from { opacity: 0; transform: translateY(12px) scale(0.97); }
-    to   { opacity: 1; transform: translateY(0) scale(1); }
-  }
-
   .modal h2 {
     font-size: 16px;
     font-weight: 600;
@@ -333,7 +427,7 @@
   }
   .form-group input, .form-group select {
     width: 100%;
-    background: var(--bg);
+    background: var(--input-bg);
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 10px 14px;
@@ -343,10 +437,8 @@
     outline: none;
     transition: border-color 0.18s;
   }
-  .form-group input:focus, .form-group select:focus {
-    border-color: var(--accent);
-  }
-  .form-group select option { background: var(--surface); }
+  .form-group input:focus, .form-group select:focus { border-color: var(--accent); }
+  .form-group select option { background: var(--modal-bg); }
 
   .modal-actions {
     display: flex;
@@ -355,19 +447,17 @@
     margin-top: 22px;
   }
 
-  /* ── CATEGORY MODAL ── */
+  /* ── MISC ── */
   .empty-state {
     text-align: center;
     color: var(--muted);
     font-size: 13px;
-    padding: 40px 0;
+    padding: 60px 0;
   }
-
-  /* ── DRAG & DROP ── */
   .drag-handle {
     cursor: grab;
     color: var(--muted);
-    padding: 2px 8px;
+    padding: 2px 6px;
     font-size: 14px;
     border-radius: 4px;
     transition: color 0.15s, background 0.15s;
@@ -376,37 +466,48 @@
   .drag-handle:hover { color: var(--text); background: var(--surface); }
   .drag-handle:active { cursor: grabbing; }
 
-  .tile.tile-dragging { opacity: 0.3; transform: scale(0.93); }
+  .tile.tile-dragging { opacity: 0.3; transform: scale(0.92); }
   .tile.drop-before { box-shadow: -3px 0 0 0 var(--accent) !important; }
   .tile.drop-after  { box-shadow:  3px 0 0 0 var(--accent) !important; }
-
   .category.cat-dragging { opacity: 0.3; }
   .category.cat-drop-before { border-top: 2px solid var(--accent); margin-top: -2px; }
   .category.cat-drop-after  { border-bottom: 2px solid var(--accent); }
 
-  /* ── SCROLLBAR ── */
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb { background: var(--surface); border-radius: 3px; }
 </style>
 </head>
 <body>
 
+<div class="bg-blobs"><span class="bg-blob3"></span></div>
+
 <header>
   <div class="logo">SPEED<span>//</span>DIAL</div>
-  <div class="search-wrap">
-    <span class="search-icon">⌕</span>
-    <input type="text" id="searchInput" placeholder="Rechercher sur Google…" autocomplete="off">
+  <div class="header-center">
+    <div class="theme-dots" id="themeDots"></div>
   </div>
   <div class="header-actions">
-    <button class="btn btn-ghost" onclick="openCatModal()">+ Catégorie</button>
-    <button class="btn btn-ghost" id="exportBtn" onclick="exportData()">↓ Export</button>
+    <button class="btn btn-ghost" onclick="exportData()">↓ Export</button>
     <label class="btn btn-ghost" style="cursor:pointer">↑ Import<input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)"></label>
+    <button class="btn btn-ghost" onclick="openCatModal()">+ Catégorie</button>
   </div>
 </header>
 
+<div class="hero">
+  <div class="hero-greet" id="heroGreet"></div>
+  <div class="hero-clock">
+    <span id="clockHM"></span>
+    <span class="hero-clock-sec" id="clockSec"></span>
+  </div>
+  <div class="hero-date" id="heroDate"></div>
+  <div class="hero-search">
+    <span class="hero-search-icon">⌕</span>
+    <input type="text" id="searchInput" placeholder="Rechercher sur Google…" autocomplete="off">
+  </div>
+</div>
+
 <main>
-  <div class="date-line" id="dateLine"></div>
   <div class="categories" id="categoriesContainer"></div>
 </main>
 
@@ -427,7 +528,7 @@
       <select id="tileCatSelect"></select>
     </div>
     <div class="form-group">
-      <label>Image d'aperçu <span style="color:var(--muted);font-weight:400">(optionnel — screenshot, logo…)</span></label>
+      <label>Image d'aperçu <span style="color:var(--muted);font-weight:400">(optionnel)</span></label>
       <div id="tileImgPreviewWrap" style="display:none;margin-bottom:8px;position:relative;">
         <img id="tileImgPreview" style="width:100%;height:90px;object-fit:cover;object-position:top;border-radius:8px;border:1px solid var(--border);">
         <button onclick="clearTileImg()" style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,0.6);border:none;color:#fff;border-radius:6px;width:22px;height:22px;cursor:pointer;font-size:12px;">✕</button>
@@ -462,60 +563,139 @@
 </div>
 
 <script>
+// ── THEMES ──────────────────────────────────────────────
+const THEMES = {
+  aurora: {
+    label: 'Aurora',
+    dot: 'linear-gradient(135deg,#7c8cff,#b45aff)',
+    vars: '--accent:#8aa2ff;--text:#eef1fb;--muted:#9aa3bd;--surface:rgba(255,255,255,0.06);--surface-hover:rgba(255,255,255,0.11);--border:rgba(255,255,255,0.11);--blur:blur(16px);--header-bg:rgba(10,14,26,0.55);--input-bg:rgba(255,255,255,0.06);--modal-bg:#141a2b;--bg-base:#0a0e1a;--b1:rgba(124,140,255,0.5);--b2:rgba(180,90,255,0.42);--b3:rgba(60,200,220,0.34);--shadow:0 24px 60px rgba(0,0,0,0.55);',
+    tile: { l: 0.72, c: 0.15 }
+  },
+  sunrise: {
+    label: 'Sunrise',
+    dot: 'linear-gradient(135deg,#ffae78,#ff789f)',
+    vars: '--accent:#ff7a4d;--text:#3a2f44;--muted:#9a8ea6;--surface:rgba(255,255,255,0.74);--surface-hover:rgba(255,255,255,0.95);--border:rgba(80,40,70,0.09);--blur:blur(12px);--header-bg:rgba(253,244,238,0.62);--input-bg:rgba(255,255,255,0.72);--modal-bg:#fffaf6;--bg-base:#fdf3ec;--b1:rgba(255,170,110,0.6);--b2:rgba(255,115,165,0.5);--b3:rgba(150,160,255,0.42);--shadow:0 24px 60px rgba(190,110,80,0.28);',
+    tile: { l: 0.7, c: 0.16 }
+  },
+  neon: {
+    label: 'Neon',
+    dot: 'linear-gradient(135deg,#ff28aa,#28dcff)',
+    vars: '--accent:#22e0ff;--text:#eef0ff;--muted:#7e7ea6;--surface:rgba(255,255,255,0.035);--surface-hover:rgba(255,255,255,0.08);--border:rgba(255,255,255,0.09);--blur:blur(9px);--header-bg:rgba(7,7,16,0.55);--input-bg:rgba(255,255,255,0.05);--modal-bg:#10101e;--bg-base:#06060e;--b1:rgba(255,40,170,0.5);--b2:rgba(40,220,255,0.46);--b3:rgba(150,60,255,0.46);--shadow:0 24px 70px rgba(0,0,0,0.7);',
+    tile: { l: 0.66, c: 0.2 }
+  },
+  sand: {
+    label: 'Sand',
+    dot: 'linear-gradient(135deg,#e8c79a,#cf9355)',
+    vars: '--accent:#d97f45;--text:#4a3f2d;--muted:#9c8a6c;--surface:#f4ead6;--surface-hover:#fbf3e2;--border:rgba(120,90,45,0.18);--blur:blur(6px);--header-bg:rgba(236,223,197,0.82);--input-bg:#f7efdd;--modal-bg:#f8f0de;--bg-base:#e9dcc1;--b1:rgba(224,186,120,0.6);--b2:rgba(212,150,95,0.46);--b3:rgba(196,176,128,0.42);--shadow:0 24px 60px rgba(150,110,55,0.3);',
+    tile: { l: 0.74, c: 0.13 }
+  }
+};
+
+let currentTheme = localStorage.getItem('speeddial_theme') || 'aurora';
+
+function applyTheme(id) {
+  currentTheme = id;
+  localStorage.setItem('speeddial_theme', id);
+  document.documentElement.style.cssText = THEMES[id].vars;
+  document.querySelectorAll('.theme-dot').forEach(d => {
+    d.classList.toggle('active', d.dataset.theme === id);
+  });
+  render();
+}
+
+function buildThemeDots() {
+  const wrap = document.getElementById('themeDots');
+  wrap.innerHTML = '';
+  Object.entries(THEMES).forEach(([id, th]) => {
+    const d = document.createElement('button');
+    d.className = 'theme-dot' + (id === currentTheme ? ' active' : '');
+    d.dataset.theme = id;
+    d.style.background = th.dot;
+    d.title = th.label;
+    d.onclick = () => applyTheme(id);
+    wrap.appendChild(d);
+  });
+}
+
+// ── OKLCH TILE HELPERS ──────────────────────────────────
+function hueFor(id) {
+  let h = 0;
+  for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0;
+  return h % 360;
+}
+function tileGradient(id) {
+  const t = THEMES[currentTheme].tile;
+  const hue = hueFor(id);
+  return `linear-gradient(135deg,oklch(${t.l} ${t.c} ${hue}),oklch(${(t.l - 0.06).toFixed(2)} ${t.c} ${(hue + 45) % 360}))`;
+}
+function tileGlow(id) {
+  const t = THEMES[currentTheme].tile;
+  return `oklch(${t.l} ${t.c} ${hueFor(id)} / 0.45)`;
+}
+
 // ── DATA ──────────────────────────────────────────────
 const DEFAULT = {
   categories: [
-    { id: 'cd47', name: 'CD47 — Outils' },
+    { id: 'cd47',    name: 'CD47 — Outils' },
     { id: 'banques', name: 'Banques' },
     { id: 'telecom', name: 'Télécom' },
     { id: 'energie', name: 'Énergie' },
-    { id: 'perso', name: 'Perso' },
+    { id: 'perso',   name: 'Perso' },
   ],
   tiles: [
-    { id: 'cd1', name: 'Ateliers NumériQues', url: 'https://maswaddpt47-cmyk.github.io/ateliers-cd47_NextStep/', cat: 'cd47' },
-    { id: 'cd2', name: 'Ateliers — Admin', url: 'https://maswaddpt47-cmyk.github.io/ateliers-cd47_NextStep/admin_v9.3.html', cat: 'cd47' },
-    { id: 'cd3', name: 'CR Réunion Équipe', url: 'https://maswaddpt47-cmyk.github.io/CRConum-V10', cat: 'cd47' },
-    { id: 'cd4', name: 'Générateur SMS & Mail', url: 'https://maswaddpt47-cmyk.github.io/SMS-mail/', cat: 'cd47' },
-    { id: 't1', name: 'Crédit Agricole', url: 'https://www.credit-agricole.fr', cat: 'banques' },
-    { id: 't2', name: 'Nickel', url: 'https://www.compte-nickel.fr', cat: 'banques' },
-    { id: 't3', name: 'Hello Bank', url: 'https://www.hellobank.fr', cat: 'banques' },
-    { id: 't4', name: 'Monabanq', url: 'https://www.monabanq.com', cat: 'banques' },
-    { id: 't5', name: 'Bouygues', url: 'https://www.bouyguestelecom.fr', cat: 'telecom' },
-    { id: 't6', name: 'Free Mobile', url: 'https://mobile.free.fr', cat: 'telecom' },
-    { id: 't7', name: 'Freebox', url: 'https://subscribe.free.fr/login', cat: 'telecom' },
-    { id: 't8', name: 'Orange', url: 'https://www.orange.fr', cat: 'telecom' },
-    { id: 't9', name: 'EDF', url: 'https://particulier.edf.fr', cat: 'energie' },
-    { id: 't10', name: 'Enedis', url: 'https://www.enedis.fr', cat: 'energie' },
-    { id: 't11', name: 'Saur', url: 'https://www.saur.com', cat: 'energie' },
-    { id: 't12', name: 'Amazon', url: 'https://www.amazon.fr', cat: 'perso' },
-    { id: 't13', name: 'LinkedIn', url: 'https://www.linkedin.com', cat: 'perso' },
+    { id: 'cd1',  name: 'Ateliers NumériQues',    url: 'https://maswaddpt47-cmyk.github.io/ateliers-cd47_NextStep/',              cat: 'cd47' },
+    { id: 'cd2',  name: 'Ateliers — Admin',        url: 'https://maswaddpt47-cmyk.github.io/ateliers-cd47_NextStep/admin_v9.3.html', cat: 'cd47' },
+    { id: 'cd3',  name: 'CR Réunion Équipe',       url: 'https://maswaddpt47-cmyk.github.io/CRConum-V10',                           cat: 'cd47' },
+    { id: 'cd4',  name: 'Générateur SMS & Mail',   url: 'https://maswaddpt47-cmyk.github.io/SMS-mail/',                             cat: 'cd47' },
+    { id: 't1',   name: 'Crédit Agricole',         url: 'https://www.credit-agricole.fr',    cat: 'banques' },
+    { id: 't2',   name: 'Nickel',                  url: 'https://www.compte-nickel.fr',       cat: 'banques' },
+    { id: 't3',   name: 'Hello Bank',              url: 'https://www.hellobank.fr',           cat: 'banques' },
+    { id: 't4',   name: 'Monabanq',                url: 'https://www.monabanq.com',           cat: 'banques' },
+    { id: 't5',   name: 'Bouygues',                url: 'https://www.bouyguestelecom.fr',     cat: 'telecom' },
+    { id: 't6',   name: 'Free Mobile',             url: 'https://mobile.free.fr',             cat: 'telecom' },
+    { id: 't7',   name: 'Freebox',                 url: 'https://subscribe.free.fr/login',    cat: 'telecom' },
+    { id: 't8',   name: 'Orange',                  url: 'https://www.orange.fr',              cat: 'telecom' },
+    { id: 't9',   name: 'EDF',                     url: 'https://particulier.edf.fr',         cat: 'energie' },
+    { id: 't10',  name: 'Enedis',                  url: 'https://www.enedis.fr',              cat: 'energie' },
+    { id: 't11',  name: 'Saur',                    url: 'https://www.saur.com',               cat: 'energie' },
+    { id: 't12',  name: 'Amazon',                  url: 'https://www.amazon.fr',              cat: 'perso' },
+    { id: 't13',  name: 'LinkedIn',                url: 'https://www.linkedin.com',           cat: 'perso' },
   ]
 };
 
 let data = JSON.parse(localStorage.getItem('speeddial_data') || 'null') || DEFAULT;
+let animateOnce = true;
 
 function save() {
   localStorage.setItem('speeddial_data', JSON.stringify(data));
 }
 
-// ── DATE ──────────────────────────────────────────────
-function setDate() {
+// ── CLOCK & HERO ─────────────────────────────────────────
+function updateClock() {
+  const now = new Date();
+  const hh = String(now.getHours()).padStart(2, '0');
+  const mm = String(now.getMinutes()).padStart(2, '0');
+  const ss = String(now.getSeconds()).padStart(2, '0');
+  document.getElementById('clockHM').textContent = hh + ':' + mm;
+  document.getElementById('clockSec').textContent = ss;
+}
+function updateGreet() {
+  const h = new Date().getHours();
+  const g = h < 5 ? 'Bonne nuit' : h < 12 ? 'Bonjour' : h < 18 ? 'Bon après-midi' : 'Bonsoir';
+  document.getElementById('heroGreet').textContent = g + ' 👋';
+}
+function updateDate() {
   const d = new Date();
-  const opts = { weekday:'long', day:'numeric', month:'long', year:'numeric' };
-  document.getElementById('dateLine').textContent =
-    d.toLocaleDateString('fr-FR', opts);
+  const opts = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+  document.getElementById('heroDate').textContent = d.toLocaleDateString('fr-FR', opts).toUpperCase();
 }
 
 // ── FAVICON ───────────────────────────────────────────
 function getFaviconUrl(url) {
   try {
     const domain = new URL(url).hostname;
-    return `https://icons.duckduckgo.com/ip3/${domain}.ico`;
+    return 'https://icons.duckduckgo.com/ip3/' + domain + '.ico';
   } catch { return null; }
-}
-
-function domainInitial(name) {
-  return name.trim().charAt(0).toUpperCase();
 }
 
 // ── RENDER ────────────────────────────────────────────
@@ -523,65 +703,90 @@ function render() {
   const container = document.getElementById('categoriesContainer');
   container.innerHTML = '';
 
+  if (data.categories.length === 0) {
+    container.innerHTML = '<div class="empty-state">Aucune catégorie — clique sur "+ Catégorie" pour commencer.</div>';
+    animateOnce = false;
+    return;
+  }
+
+  let delay = 0;
   data.categories.forEach(cat => {
     const tiles = data.tiles.filter(t => t.cat === cat.id);
+    const catHue = hueFor(cat.id);
+    const dotColor = 'oklch(0.72 0.15 ' + catHue + ')';
 
     const sec = document.createElement('div');
     sec.className = 'category';
     sec.dataset.catId = cat.id;
-    sec.innerHTML = `
-      <div class="category-header">
-        <span class="drag-handle" data-cat-handle="${cat.id}" title="Glisser pour réordonner">⠿</span>
-        <span class="category-name">${cat.name}</span>
-        <div class="category-line"></div>
-        <div class="cat-actions">
-          <button class="cat-btn" title="Renommer" onclick="editCat('${cat.id}')">✎</button>
-          <button class="cat-btn danger" title="Supprimer" onclick="promptDeleteCat('${cat.id}')">✕</button>
-        </div>
-      </div>
-      <div class="tiles" id="tiles-${cat.id}"></div>
-    `;
+    sec.innerHTML =
+      '<div class="category-header">' +
+        '<span class="drag-handle" data-cat-handle="' + cat.id + '" title="Glisser pour réordonner">⠿</span>' +
+        '<span class="cat-dot" style="background:' + dotColor + '"></span>' +
+        '<span class="category-name">' + cat.name + '</span>' +
+        '<div class="category-line"></div>' +
+        '<div class="cat-actions">' +
+          '<button class="cat-btn" title="Renommer" onclick="editCat(\'' + cat.id + '\')">✎</button>' +
+          '<button class="cat-btn danger" title="Supprimer" onclick="promptDeleteCat(\'' + cat.id + '\')">✕</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="tiles" id="tiles-' + cat.id + '"></div>';
     container.appendChild(sec);
 
-    const grid = sec.querySelector(`#tiles-${cat.id}`);
+    const grid = sec.querySelector('#tiles-' + cat.id);
 
     tiles.forEach(tile => {
       const a = document.createElement('a');
-      a.className = 'tile';
+      a.className = 'tile' + (animateOnce ? ' animate-in' : '');
+      if (animateOnce) a.style.animationDelay = (delay * 35) + 'ms';
+      delay++;
       a.href = tile.url;
       a.target = '_blank';
       a.rel = 'noopener';
       a.draggable = true;
       a.dataset.tileId = tile.id;
 
-      const faviconUrl = getFaviconUrl(tile.url);
-      const imgOrFallback = tile.img
-        ? `<img class="tile-preview" src="${tile.img}" alt="">`
-        : faviconUrl
-          ? `<img class="tile-favicon" src="${faviconUrl}" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
-            + `<div class="tile-favicon-fallback" style="display:none">${domainInitial(tile.name)}</div>`
-          : `<div class="tile-favicon-fallback">${domainInitial(tile.name)}</div>`;
+      const grad = tileGradient(tile.id);
+      const glow = tileGlow(tile.id);
 
-      a.innerHTML = `
-        ${imgOrFallback}
-        <span class="tile-title">${tile.name}</span>
-        <button class="tile-edit-btn" title="Modifier" onclick="editTile(event,'${tile.id}')">✎</button>
-      `;
+      let topContent;
+      if (tile.img) {
+        topContent = '<img class="tile-preview-img" src="' + tile.img + '" alt="">';
+      } else {
+        const fav = getFaviconUrl(tile.url);
+        const initial = tile.name.trim().charAt(0).toUpperCase();
+        if (fav) {
+          topContent =
+            '<img class="tile-favicon" src="' + fav + '" alt=""' +
+            ' onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">' +
+            '<div class="tile-initial" style="display:none">' + initial + '</div>';
+        } else {
+          topContent = '<div class="tile-initial">' + initial + '</div>';
+        }
+      }
+
+      a.innerHTML =
+        '<div class="tile-top" style="background:' + grad + '">' +
+          topContent +
+        '</div>' +
+        '<div class="tile-body">' +
+          '<span class="tile-title">' + tile.name + '</span>' +
+        '</div>' +
+        '<button class="tile-edit-btn" title="Modifier" onclick="editTile(event,\'' + tile.id + '\')">✎</button>';
+
+      a.addEventListener('mouseenter', () => { a.style.boxShadow = '0 0 0 2px ' + glow + ', 0 20px 40px rgba(0,0,0,0.3)'; });
+      a.addEventListener('mouseleave', () => { a.style.boxShadow = ''; });
+
       grid.appendChild(a);
     });
 
-    // Bouton +
     const addBtn = document.createElement('button');
     addBtn.className = 'tile-add';
-    addBtn.innerHTML = `<span class="tile-add-icon">+</span><span>Ajouter</span>`;
+    addBtn.innerHTML = '<span class="tile-add-icon">+</span><span>Ajouter</span>';
     addBtn.onclick = () => openTileModal(null, cat.id);
     grid.appendChild(addBtn);
   });
 
-  if (data.categories.length === 0) {
-    container.innerHTML = `<div class="empty-state">Aucune catégorie — clique sur "+ Catégorie" pour commencer.</div>`;
-  }
-
+  animateOnce = false;
   bindDragDrop();
 }
 
@@ -589,7 +794,7 @@ function render() {
 document.getElementById('searchInput').addEventListener('keydown', e => {
   if (e.key === 'Enter') {
     const q = e.target.value.trim();
-    if (q) window.open(`https://www.google.com/search?q=${encodeURIComponent(q)}`, '_blank');
+    if (q) window.open('https://www.google.com/search?q=' + encodeURIComponent(q), '_blank');
   }
 });
 
@@ -603,7 +808,6 @@ function previewTileImg(e) {
   if (!file) return;
   const reader = new FileReader();
   reader.onload = ev => {
-    // Redimensionner via canvas pour limiter la taille en localStorage
     const img = new Image();
     img.onload = () => {
       const canvas = document.createElement('canvas');
@@ -632,11 +836,8 @@ function clearTileImg() {
 function openTileModal(tileId, catId) {
   currentTileId = tileId;
   currentTileCat = catId;
-
   const select = document.getElementById('tileCatSelect');
-  select.innerHTML = data.categories.map(c =>
-    `<option value="${c.id}">${c.name}</option>`
-  ).join('');
+  select.innerHTML = data.categories.map(c => '<option value="' + c.id + '">' + c.name + '</option>').join('');
 
   if (tileId) {
     const tile = data.tiles.find(t => t.id === tileId);
@@ -645,14 +846,11 @@ function openTileModal(tileId, catId) {
     document.getElementById('tileUrlInput').value = tile.url;
     select.value = tile.cat;
     document.getElementById('tileDeleteBtn').style.display = 'inline-flex';
-    // Image
     if (tile.img) {
       currentTileImg = tile.img;
       document.getElementById('tileImgPreview').src = tile.img;
       document.getElementById('tileImgPreviewWrap').style.display = 'block';
-    } else {
-      clearTileImg();
-    }
+    } else { clearTileImg(); }
   } else {
     document.getElementById('tileModalTitle').textContent = 'Nouveau raccourci';
     document.getElementById('tileNameInput').value = '';
@@ -666,9 +864,7 @@ function openTileModal(tileId, catId) {
   setTimeout(() => document.getElementById('tileNameInput').focus(), 80);
 }
 
-function closeTileModal() {
-  document.getElementById('tileModal').classList.remove('open');
-}
+function closeTileModal() { document.getElementById('tileModal').classList.remove('open'); }
 
 function editTile(e, tileId) {
   e.preventDefault();
@@ -680,18 +876,14 @@ function saveTile() {
   const name = document.getElementById('tileNameInput').value.trim();
   let url = document.getElementById('tileUrlInput').value.trim();
   const cat = document.getElementById('tileCatSelect').value;
-
   if (!name || !url) return;
   if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
-
   if (currentTileId) {
     const tile = data.tiles.find(t => t.id === currentTileId);
-    tile.name = name; tile.url = url; tile.cat = cat;
-    tile.img = currentTileImg || null;
+    tile.name = name; tile.url = url; tile.cat = cat; tile.img = currentTileImg || null;
   } else {
     data.tiles.push({ id: 't' + Date.now(), name, url, cat, img: currentTileImg || null });
   }
-
   save(); render(); closeTileModal();
 }
 
@@ -713,10 +905,7 @@ function openCatModal() {
   document.getElementById('catModal').classList.add('open');
   setTimeout(() => document.getElementById('catNameInput').focus(), 80);
 }
-
-function closeCatModal() {
-  document.getElementById('catModal').classList.remove('open');
-}
+function closeCatModal() { document.getElementById('catModal').classList.remove('open'); }
 
 function editCat(catId) {
   currentCatId = catId;
@@ -731,21 +920,15 @@ function editCat(catId) {
 function saveCat() {
   const name = document.getElementById('catNameInput').value.trim();
   if (!name) return;
-
   if (currentCatId) {
     data.categories.find(c => c.id === currentCatId).name = name;
   } else {
-    const id = 'cat_' + Date.now();
-    data.categories.push({ id, name });
+    data.categories.push({ id: 'cat_' + Date.now(), name });
   }
-
   save(); render(); closeCatModal();
 }
 
-function promptDeleteCat(catId) {
-  currentCatId = catId;
-  editCat(catId);
-}
+function promptDeleteCat(catId) { currentCatId = catId; editCat(catId); }
 
 function deleteCurrentCat() {
   if (!currentCatId) return;
@@ -775,6 +958,7 @@ function importData(e) {
       const imported = JSON.parse(ev.target.result);
       if (imported.categories && imported.tiles) {
         data = imported;
+        animateOnce = true;
         save(); render();
         showToast('✓ ' + imported.tiles.length + ' raccourcis importés dans ' + imported.categories.length + ' catégories');
       } else { showToast('✗ Fichier invalide — categories et tiles requis'); }
@@ -789,22 +973,18 @@ function showToast(msg) {
   if (!t) {
     t = document.createElement('div');
     t.id = '_toast';
-    t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:rgba(20,23,34,0.97);color:#e8eaf2;font-family:'DM Sans',sans-serif;font-size:14px;padding:12px 24px;border-radius:12px;border:1px solid rgba(255,255,255,0.12);box-shadow:0 8px 32px rgba(0,0,0,0.5);z-index:9999;white-space:nowrap;pointer-events:none;transition:opacity .3s';
+    t.style.cssText = 'position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--modal-bg);color:var(--text);font-family:\'DM Sans\',sans-serif;font-size:14px;padding:13px 26px;border-radius:14px;border:1px solid var(--border);box-shadow:var(--shadow);z-index:9999;white-space:nowrap;pointer-events:none;transition:opacity .35s;backdrop-filter:blur(12px)';
     document.body.appendChild(t);
   }
   t.textContent = msg;
   t.style.opacity = '1';
   clearTimeout(t._timer);
-  t._timer = setTimeout(() => { t.style.opacity = '0'; }, 3000);
+  t._timer = setTimeout(() => { t.style.opacity = '0'; }, 3200);
 }
 
-// ── FERMER MODALS SUR CLIC OVERLAY ───────────────────
-document.getElementById('tileModal').addEventListener('click', e => {
-  if (e.target === e.currentTarget) closeTileModal();
-});
-document.getElementById('catModal').addEventListener('click', e => {
-  if (e.target === e.currentTarget) closeCatModal();
-});
+// ── CLOSE MODALS ON OVERLAY CLICK ────────────────────
+document.getElementById('tileModal').addEventListener('click', e => { if (e.target === e.currentTarget) closeTileModal(); });
+document.getElementById('catModal').addEventListener('click', e => { if (e.target === e.currentTarget) closeCatModal(); });
 
 // ── DRAG & DROP ───────────────────────────────────────
 let dragTileId = null;
@@ -814,52 +994,37 @@ let didDrag    = false;
 function bindDragDrop() {
   const container = document.getElementById('categoriesContainer');
 
-  // ── TILES ──
   container.querySelectorAll('.tile[data-tile-id]').forEach(el => {
-
     el.addEventListener('dragstart', e => {
-      e.stopPropagation(); // empêche le bubble vers .category
-      dragTileId = el.dataset.tileId;
-      dragCatId  = null;
-      // S'assurer qu'aucune section n'est draggable
+      e.stopPropagation();
+      dragTileId = el.dataset.tileId; dragCatId = null;
       container.querySelectorAll('.category').forEach(s => s.draggable = false);
       e.dataTransfer.setData('text/plain', dragTileId);
       e.dataTransfer.effectAllowed = 'move';
       setTimeout(() => el.classList.add('tile-dragging'), 0);
     });
-
     el.addEventListener('dragend', e => {
       e.stopPropagation();
       el.classList.remove('tile-dragging');
       clearTileHighlights();
       setTimeout(() => { dragTileId = null; didDrag = false; }, 50);
     });
-
     el.addEventListener('dragover', e => {
       if (!dragTileId) return;
-      e.preventDefault();
-      e.stopPropagation();
+      e.preventDefault(); e.stopPropagation();
       clearTileHighlights();
       const rect = el.getBoundingClientRect();
       el.classList.add(e.clientX < rect.left + rect.width / 2 ? 'drop-before' : 'drop-after');
     });
-
-    el.addEventListener('dragleave', e => {
-      e.stopPropagation();
-      el.classList.remove('drop-before', 'drop-after');
-    });
-
+    el.addEventListener('dragleave', e => { e.stopPropagation(); el.classList.remove('drop-before', 'drop-after'); });
     el.addEventListener('drop', e => {
-      e.preventDefault();
-      e.stopPropagation();
+      e.preventDefault(); e.stopPropagation();
       clearTileHighlights();
       const targetId = el.dataset.tileId;
       if (!dragTileId || dragTileId === targetId) return;
-
-      const rect   = el.getBoundingClientRect();
+      const rect = el.getBoundingClientRect();
       const before = e.clientX < rect.left + rect.width / 2;
       const targetCat = data.tiles.find(t => t.id === targetId).cat;
-
       const fromIdx = data.tiles.findIndex(t => t.id === dragTileId);
       const [moved] = data.tiles.splice(fromIdx, 1);
       moved.cat = targetCat;
@@ -867,75 +1032,54 @@ function bindDragDrop() {
       data.tiles.splice(before ? toIdx : toIdx + 1, 0, moved);
       save(); render();
     });
-
-    // Bloquer le clic si c'était un vrai drag
-    el.addEventListener('click', e => {
-      if (didDrag) { e.preventDefault(); e.stopPropagation(); }
-    });
+    el.addEventListener('click', e => { if (didDrag) { e.preventDefault(); e.stopPropagation(); } });
   });
 
-  // Drop sur grid vide (déplacer dans une catégorie sans tuiles)
   container.querySelectorAll('.tiles').forEach(grid => {
-    grid.addEventListener('dragover', e => {
-      if (!dragTileId) return;
-      e.preventDefault();
-    });
+    grid.addEventListener('dragover', e => { if (!dragTileId) return; e.preventDefault(); });
     grid.addEventListener('drop', e => {
       if (!dragTileId) return;
-      const onTile = e.target.closest('.tile[data-tile-id]');
-      if (onTile) return; // géré par le tile lui-même
+      if (e.target.closest('.tile[data-tile-id]')) return;
       const catId = grid.id.replace('tiles-', '');
-      const tile  = data.tiles.find(t => t.id === dragTileId);
+      const tile = data.tiles.find(t => t.id === dragTileId);
       if (tile) { tile.cat = catId; save(); render(); }
     });
   });
 
-  // ── CATEGORIES ──
   container.querySelectorAll('[data-cat-handle]').forEach(handle => {
     const sec = handle.closest('.category');
-
     handle.addEventListener('mousedown', () => { sec.draggable = true; });
-    handle.addEventListener('mouseup',   () => { if (!dragCatId) sec.draggable = false; });
+    handle.addEventListener('mouseup', () => { if (!dragCatId) sec.draggable = false; });
   });
 
   container.querySelectorAll('.category').forEach(sec => {
-
     sec.addEventListener('dragstart', e => {
       if (!sec.draggable) { e.preventDefault(); return; }
-      dragCatId  = sec.dataset.catId;
-      dragTileId = null;
-      didDrag    = true;
+      dragCatId = sec.dataset.catId; dragTileId = null; didDrag = true;
       e.dataTransfer.setData('text/plain', dragCatId);
       e.dataTransfer.effectAllowed = 'move';
       setTimeout(() => sec.classList.add('cat-dragging'), 0);
     });
-
     sec.addEventListener('dragend', () => {
-      sec.draggable = false;
-      sec.classList.remove('cat-dragging');
-      clearCatHighlights();
-      dragCatId = null;
+      sec.draggable = false; sec.classList.remove('cat-dragging');
+      clearCatHighlights(); dragCatId = null;
       setTimeout(() => { didDrag = false; }, 50);
     });
-
     sec.addEventListener('dragover', e => {
       if (!dragCatId || dragCatId === sec.dataset.catId) return;
-      e.preventDefault();
-      clearCatHighlights();
+      e.preventDefault(); clearCatHighlights();
       const rect = sec.getBoundingClientRect();
       sec.classList.add(e.clientY < rect.top + rect.height / 2 ? 'cat-drop-before' : 'cat-drop-after');
     });
-
     sec.addEventListener('dragleave', () => clearCatHighlights());
-
     sec.addEventListener('drop', e => {
       e.preventDefault();
       if (!dragCatId || dragCatId === sec.dataset.catId) { clearCatHighlights(); return; }
-      const rect   = sec.getBoundingClientRect();
+      const rect = sec.getBoundingClientRect();
       const before = e.clientY < rect.top + rect.height / 2;
       const fromIdx = data.categories.findIndex(c => c.id === dragCatId);
       const [moved] = data.categories.splice(fromIdx, 1);
-      const toIdx   = data.categories.findIndex(c => c.id === sec.dataset.catId);
+      const toIdx = data.categories.findIndex(c => c.id === sec.dataset.catId);
       data.categories.splice(before ? toIdx : toIdx + 1, 0, moved);
       save(); render();
     });
@@ -943,18 +1087,19 @@ function bindDragDrop() {
 }
 
 function clearTileHighlights() {
-  document.querySelectorAll('.tile').forEach(t => {
-    t.classList.remove('drop-before', 'drop-after');
-  });
+  document.querySelectorAll('.tile').forEach(t => t.classList.remove('drop-before', 'drop-after'));
 }
 function clearCatHighlights() {
-  document.querySelectorAll('.category').forEach(c => {
-    c.classList.remove('cat-drop-before', 'cat-drop-after');
-  });
+  document.querySelectorAll('.category').forEach(c => c.classList.remove('cat-drop-before', 'cat-drop-after'));
 }
 
 // ── INIT ──────────────────────────────────────────────
-setDate();
+applyTheme(currentTheme);
+buildThemeDots();
+updateGreet();
+updateClock();
+updateDate();
+setInterval(updateClock, 1000);
 render();
 </script>
 </body>
