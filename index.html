@@ -499,6 +499,76 @@
   .category.cat-drop-before { border-top: 2px solid var(--accent); margin-top: -2px; }
   .category.cat-drop-after  { border-bottom: 2px solid var(--accent); }
 
+  /* ── APERÇU HOVER ── */
+  .tile-tooltip {
+    position: fixed;
+    z-index: 150;
+    pointer-events: none;
+    width: 220px;
+    background: var(--modal-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.5);
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(6px) scale(0.97);
+    transition: opacity 0.15s ease, transform 0.15s ease;
+  }
+  .tile-tooltip.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  .tt-img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    object-position: top;
+    display: block;
+    background: var(--surface);
+  }
+  .tt-body {
+    padding: 10px 12px 11px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+  .tt-favicon {
+    width: 20px; height: 20px;
+    border-radius: 5px;
+    object-fit: contain;
+    flex-shrink: 0;
+  }
+  .tt-info { min-width: 0; }
+  .tt-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .tt-url {
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .tt-no-img {
+    width: 100%;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.7);
+  }
+
+  /* Désactivé sur mobile (pas de hover) */
+  @media (max-width: 640px) { .tile-tooltip { display: none !important; } }
+
   /* ── PALETTE DE COMMANDE ── */
   .palette-overlay {
     position: fixed;
@@ -909,6 +979,9 @@
   </div>
 </div>
 
+<!-- Tooltip aperçu hover -->
+<div class="tile-tooltip" id="tileTooltip"></div>
+
 <!-- Palette de commande -->
 <div class="palette-overlay" id="paletteOverlay" onclick="if(event.target===this)closePalette()">
   <div class="palette-box">
@@ -1224,6 +1297,7 @@ function makeTileNode(tile, opts) {
   if (!opts.pinned) {
     a.addEventListener('click', e => { if (didDrag) { e.preventDefault(); e.stopPropagation(); } });
   }
+  bindTileTooltip(a, tile);
   return a;
 }
 
@@ -1608,6 +1682,75 @@ function clearTileHighlights() {
 }
 function clearCatHighlights() {
   document.querySelectorAll('.category').forEach(c => c.classList.remove('cat-drop-before', 'cat-drop-after'));
+}
+
+// ── APERÇU HOVER ─────────────────────────────────────
+const tooltip   = document.getElementById('tileTooltip');
+let ttTimer     = null;
+const TT_DELAY  = 320; // ms avant apparition
+
+function showTooltip(tile, anchorEl) {
+  const fav  = getFaviconUrl(tile.url);
+  const init = tile.name.trim().charAt(0).toUpperCase();
+  const grad = tileGradient(tile.id);
+  let host = '';
+  try { host = new URL(tile.url).hostname; } catch {}
+
+  let topHtml;
+  if (tile.img) {
+    topHtml = '<img class="tt-img" src="' + tile.img + '" alt="">';
+  } else {
+    topHtml = '<div class="tt-no-img" style="background:' + grad + '">' + init + '</div>';
+  }
+
+  const faviconTag = fav
+    ? '<img class="tt-favicon" src="' + fav + '" alt="" onerror="this.style.display=\'none\'">'
+    : '';
+
+  tooltip.innerHTML =
+    topHtml +
+    '<div class="tt-body">' +
+      faviconTag +
+      '<div class="tt-info">' +
+        '<div class="tt-name">' + tile.name + '</div>' +
+        '<div class="tt-url">' + host + '</div>' +
+      '</div>' +
+    '</div>';
+
+  positionTooltip(anchorEl);
+  tooltip.classList.add('visible');
+}
+
+function positionTooltip(el) {
+  const r  = el.getBoundingClientRect();
+  const tw = 220;
+  const th = 175; // hauteur estimée
+
+  let left = r.left + r.width / 2 - tw / 2;
+  let top  = r.top - th - 10;
+
+  // Si ça sort à gauche/droite
+  if (left < 8) left = 8;
+  if (left + tw > window.innerWidth - 8) left = window.innerWidth - tw - 8;
+  // Si ça sort en haut → afficher en dessous
+  if (top < 8) top = r.bottom + 10;
+
+  tooltip.style.left = left + 'px';
+  tooltip.style.top  = top  + 'px';
+}
+
+function hideTooltip() {
+  clearTimeout(ttTimer);
+  tooltip.classList.remove('visible');
+}
+
+function bindTileTooltip(el, tile) {
+  el.addEventListener('mouseenter', () => {
+    clearTimeout(ttTimer);
+    ttTimer = setTimeout(() => showTooltip(tile, el), TT_DELAY);
+  });
+  el.addEventListener('mouseleave', hideTooltip);
+  el.addEventListener('click', hideTooltip);
 }
 
 // ── PALETTE DE COMMANDE ───────────────────────────────
