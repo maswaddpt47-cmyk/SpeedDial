@@ -2,8 +2,19 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Speed Dial</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>SpeedDial</title>
+<meta name="description" content="Tableau de bord de raccourcis personnalisé">
+<meta name="theme-color" content="#0a0e1a" id="metaThemeColor">
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+
+<!-- iOS -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SpeedDial">
+<link rel="apple-touch-icon" href="icon-512.svg">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -1099,6 +1110,9 @@ const THEMES = {
 
 let currentTheme = localStorage.getItem('speeddial_theme') || 'aurora';
 
+// Couleurs de fond par thème pour la barre système Android
+const THEME_BG = { aurora:'#0a0e1a', sunrise:'#fdf3ec', neon:'#06060e', sand:'#e9dcc1' };
+
 function applyTheme(id) {
   currentTheme = id;
   localStorage.setItem('speeddial_theme', id);
@@ -1106,6 +1120,8 @@ function applyTheme(id) {
   document.querySelectorAll('.theme-dot').forEach(d => {
     d.classList.toggle('active', d.dataset.theme === id);
   });
+  const mc = document.getElementById('metaThemeColor');
+  if (mc) mc.setAttribute('content', THEME_BG[id] || '#0a0e1a');
   render();
 }
 
@@ -1865,6 +1881,11 @@ document.addEventListener('keydown', e => {
   }
   if (e.key === 'Escape') closePalette();
 });
+
+// ── SERVICE WORKER ────────────────────────────────────
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
 
 // ── INIT ──────────────────────────────────────────────
 applyTheme(currentTheme);
