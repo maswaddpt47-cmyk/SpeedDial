@@ -985,6 +985,64 @@
   .ctx-item span:first-child { font-size: 18px; width: 24px; text-align: center; }
   .ctx-sep { height: 1px; background: var(--border); margin: 4px 8px; }
 
+  /* ── MODE ÉDITION GLOBAL ── */
+  @keyframes wiggle {
+    0%,100% { transform: perspective(600px) rotateZ(-1.2deg) scale(var(--ts,1)); }
+    50%      { transform: perspective(600px) rotateZ(1.2deg)  scale(var(--ts,1)); }
+  }
+  body.edit-mode .tile:not(.tile-add) {
+    animation: wiggle 0.55s ease-in-out infinite;
+  }
+  body.edit-mode .tile .tile-pin-btn  { display: flex !important; }
+  body.edit-mode .tile .tile-edit-btn { display: flex !important; }
+  body.edit-mode .drag-handle         { opacity: 1 !important; pointer-events: auto !important; }
+  #editModeBtn.active { color: var(--accent); border-color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); }
+
+  /* ── PAGER CATÉGORIES (mobile) ── */
+  .cat-pager {
+    display: none;
+    position: fixed;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 190;
+    gap: 6px;
+    align-items: center;
+    justify-content: center;
+  }
+  .cat-pager-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.3);
+    transition: width 0.2s, background 0.2s;
+    cursor: pointer;
+  }
+  .cat-pager-dot.active {
+    width: 18px;
+    border-radius: 3px;
+    background: var(--accent);
+  }
+
+  @media (max-width: 640px) {
+    main { padding: 0; overflow: hidden; }
+    .categories {
+      flex-direction: row;
+      overflow-x: scroll;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      gap: 0;
+    }
+    .categories::-webkit-scrollbar { display: none; }
+    .category {
+      flex-shrink: 0;
+      width: 100vw;
+      padding: 12px 12px 100px;
+      scroll-snap-align: start;
+    }
+    .cat-pager { display: flex; }
+  }
+
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--surface); border-radius: 3px; }
@@ -1142,6 +1200,7 @@
     <button class="btn btn-ghost" onclick="exportData()" title="Exporter">↓ <span>Export</span></button>
     <label class="btn btn-ghost" style="cursor:pointer" title="Importer">↑ <span>Import</span><input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)"></label>
     <button class="btn btn-ghost" onclick="openCatModal()" title="Nouvelle catégorie">+ <span>Catégorie</span></button>
+    <button class="btn btn-ghost" id="editModeBtn" onclick="toggleEditMode()" title="Mode édition (E)">✎ <span>Éditer</span></button>
     <button class="burger-btn" onclick="toggleThemeDrawer()" title="Changer de thème">🎨</button>
   </div>
 </header>
@@ -1195,6 +1254,7 @@
 <main>
   <div class="categories" id="categoriesContainer"></div>
 </main>
+<div class="cat-pager" id="catPager"></div>
 
 <!-- Modal Tile -->
 <div class="modal-overlay" id="tileModal">
@@ -1612,6 +1672,8 @@ function renderPinned() {
     a.target = '_blank';
     a.rel = 'noopener noreferrer';
     a.title = tile.name;
+    a.draggable = true;
+    a.dataset.tileId = tile.id;
 
     const iconDiv = document.createElement('div');
     iconDiv.className = 'dock-icon';
@@ -1656,6 +1718,7 @@ function renderPinned() {
   });
 
   initDockMagnify(bar);
+  initDockDrag(bar);
 }
 
 function initDockMagnify(bar) {
@@ -1778,6 +1841,7 @@ function render() {
   animateOnce = false;
   bindDragDrop();
   renderPinned();
+  buildCatPager();
 }
 
 // ── SEARCH ────────────────────────────────────────────
@@ -2278,6 +2342,112 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js?v=3').then(reg => {
     reg.update();
   }).catch(() => {});
+}
+
+// ── MODE ÉDITION GLOBAL ───────────────────────────────
+let editMode = false;
+function toggleEditMode() {
+  editMode = !editMode;
+  document.body.classList.toggle('edit-mode', editMode);
+  const btn = document.getElementById('editModeBtn');
+  btn.classList.toggle('active', editMode);
+  btn.innerHTML = editMode ? '✓ <span>Terminer</span>' : '✎ <span>Éditer</span>';
+}
+
+// ── RACCOURCIS CLAVIER ────────────────────────────────
+function isInputActive() {
+  const t = document.activeElement && document.activeElement.tagName;
+  return t === 'INPUT' || t === 'TEXTAREA';
+}
+
+document.addEventListener('keydown', e => {
+  if (isInputActive()) return;
+  if (e.key === 'e' && !e.ctrlKey && !e.metaKey) { toggleEditMode(); return; }
+  if (/^[1-6]$/.test(e.key) && !e.ctrlKey && !e.metaKey) {
+    const idx = parseInt(e.key) - 1;
+    const id  = data.pinned[idx];
+    if (id) {
+      const tile = data.tiles.find(t => t.id === id);
+      if (tile) window.open(tile.url, '_blank', 'noopener');
+    }
+  }
+});
+
+// ── PAGER CATÉGORIES (swipe mobile) ───────────────────
+function buildCatPager() {
+  const pager = document.getElementById('catPager');
+  if (!pager) return;
+  const cats = [...document.querySelectorAll('.category')];
+  if (cats.length <= 1) { pager.style.display = 'none'; return; }
+  pager.innerHTML = '';
+  cats.forEach((cat, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'cat-pager-dot' + (i === 0 ? ' active' : '');
+    dot.onclick = () => cat.scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
+    pager.appendChild(dot);
+  });
+
+  const container = document.getElementById('categoriesContainer');
+  container.addEventListener('scroll', () => {
+    const w = container.offsetWidth;
+    const idx = Math.round(container.scrollLeft / w);
+    pager.querySelectorAll('.cat-pager-dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+  }, { passive: true });
+}
+
+// ── DRAG & DROP DOCK (réorganisation) ─────────────────
+function initDockDrag(bar) {
+  let dragId = null;
+  let placeholder = null;
+
+  bar.addEventListener('dragstart', e => {
+    dragId = e.target.closest('.dock-item') && e.target.closest('.dock-item').dataset.tileId;
+    if (!dragId) { e.preventDefault(); return; }
+    setTimeout(() => e.target.closest('.dock-item') && (e.target.closest('.dock-item').style.opacity = '0.3'), 0);
+  });
+
+  bar.addEventListener('dragend', e => {
+    const item = e.target.closest('.dock-item');
+    if (item) item.style.opacity = '';
+    if (placeholder) { placeholder.remove(); placeholder = null; }
+    dragId = null;
+  });
+
+  bar.addEventListener('dragover', e => {
+    e.preventDefault();
+    const target = e.target.closest('.dock-item');
+    if (!target || target.dataset.tileId === dragId) return;
+    const rect = target.getBoundingClientRect();
+    const after = e.clientX > rect.left + rect.width / 2;
+    if (!placeholder) {
+      placeholder = document.createElement('div');
+      placeholder.style.cssText = 'width:4px;height:46px;background:var(--accent);border-radius:2px;flex-shrink:0';
+    }
+    bar.insertBefore(placeholder, after ? target.nextSibling : target);
+  });
+
+  bar.addEventListener('dragleave', e => {
+    if (!bar.contains(e.relatedTarget) && placeholder) { placeholder.remove(); placeholder = null; }
+  });
+
+  bar.addEventListener('drop', e => {
+    e.preventDefault();
+    if (!dragId || !placeholder) return;
+    const items = [...bar.querySelectorAll('.dock-item')];
+    const placeholderIdx = [...bar.children].indexOf(placeholder);
+    const insertBefore = items.find((it, i) => [...bar.children].indexOf(it) >= placeholderIdx);
+    const fromIdx = data.pinned.indexOf(dragId);
+    data.pinned.splice(fromIdx, 1);
+    if (insertBefore) {
+      const toId = insertBefore.dataset.tileId;
+      const toIdx = data.pinned.indexOf(toId);
+      data.pinned.splice(toIdx, 0, dragId);
+    } else {
+      data.pinned.push(dragId);
+    }
+    save();
+    renderPinned();
+  });
 }
 
 // ── INIT ──────────────────────────────────────────────
