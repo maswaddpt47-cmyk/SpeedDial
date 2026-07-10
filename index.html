@@ -1432,19 +1432,30 @@ function initDockMagnify(bar) {
   const MAX_SCALE = 1.55;
   const RADIUS = 110;
 
-  bar.addEventListener('mousemove', e => {
+  function applyMagnify(clientX) {
     items().forEach(item => {
       const rect = item.querySelector('.dock-icon').getBoundingClientRect();
       const cx = rect.left + rect.width / 2;
-      const dist = Math.abs(e.clientX - cx);
+      const dist = Math.abs(clientX - cx);
       const scale = dist < RADIUS ? 1 + (MAX_SCALE - 1) * Math.pow(1 - dist / RADIUS, 1.5) : 1;
       item.style.transform = `scale(${scale.toFixed(3)})`;
     });
-  });
+  }
 
-  bar.addEventListener('mouseleave', () => {
+  function resetMagnify() {
     items().forEach(item => { item.style.transform = ''; });
-  });
+  }
+
+  bar.addEventListener('mousemove', e => applyMagnify(e.clientX));
+  bar.addEventListener('mouseleave', resetMagnify);
+
+  bar.addEventListener('touchmove', e => {
+    e.preventDefault();
+    applyMagnify(e.touches[0].clientX);
+  }, { passive: false });
+
+  bar.addEventListener('touchend', resetMagnify);
+  bar.addEventListener('touchcancel', resetMagnify);
 }
 
 // ── RENDER ────────────────────────────────────────────
