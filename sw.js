@@ -1,4 +1,4 @@
-const CACHE = 'speeddial-v2';
+const CACHE = 'speeddial-v3';
 const ASSETS = [
   '/SpeedDial/',
   '/SpeedDial/index.html',
