@@ -67,7 +67,7 @@
     padding: 16px 32px;
     position: sticky;
     top: 0;
-    z-index: 20;
+    z-index: 400;
     backdrop-filter: var(--blur);
     background: var(--header-bg);
     border-bottom: 1px solid var(--border);
@@ -238,6 +238,7 @@
   main {
     position: relative;
     z-index: 1;
+    isolation: isolate;
     padding: 8px 32px 80px;
   }
 
