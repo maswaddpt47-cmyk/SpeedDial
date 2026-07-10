@@ -32,6 +32,22 @@
     z-index: 0;
     overflow: hidden;
   }
+  @keyframes blob1 {
+    0%,100% { transform: translate(0,0) scale(1); }
+    33%      { transform: translate(6vw, 8vh) scale(1.08); }
+    66%      { transform: translate(-4vw, 5vh) scale(0.94); }
+  }
+  @keyframes blob2 {
+    0%,100% { transform: translate(0,0) scale(1); }
+    33%      { transform: translate(-8vw,-6vh) scale(1.06); }
+    66%      { transform: translate(5vw,-3vh) scale(0.96); }
+  }
+  @keyframes blob3 {
+    0%,100% { transform: translate(-50%,-50%) scale(1); }
+    33%      { transform: translate(calc(-50% + 5vw), calc(-50% - 7vh)) scale(1.1); }
+    66%      { transform: translate(calc(-50% - 6vw), calc(-50% + 4vh)) scale(0.92); }
+  }
+
   .bg-blobs::before, .bg-blobs::after, .bg-blob3 {
     content: '';
     position: absolute;
@@ -42,11 +58,13 @@
     width: 70vw; height: 70vw;
     top: -20%; left: -15%;
     background: var(--b1);
+    animation: blob1 18s ease-in-out infinite;
   }
   .bg-blobs::after {
     width: 60vw; height: 60vw;
     bottom: -20%; right: -15%;
     background: var(--b2);
+    animation: blob2 22s ease-in-out infinite;
   }
   .bg-blob3 {
     width: 40vw; height: 40vw;
@@ -57,6 +75,10 @@
     position: absolute;
     border-radius: 50%;
     filter: blur(80px);
+    animation: blob3 26s ease-in-out infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bg-blobs::before, .bg-blobs::after, .bg-blob3 { animation: none; }
   }
 
   /* ── HEADER ── */
