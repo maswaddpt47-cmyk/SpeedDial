@@ -298,8 +298,13 @@
   }
 
   .tile {
-    background: var(--surface);
-    border: 1px solid var(--border);
+    --tx: 0deg;
+    --ty: 0deg;
+    --ts: 1;
+    --gx: 50%;
+    --gy: 50%;
+    background: linear-gradient(145deg, rgba(255,255,255,0.09) 0%, var(--surface) 60%);
+    border: 1px solid rgba(255,255,255,0.14);
     border-radius: 16px;
     display: flex;
     flex-direction: column;
@@ -309,17 +314,52 @@
     text-decoration: none;
     color: var(--text);
     position: relative;
-    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    transform: perspective(600px) rotateX(var(--tx)) rotateY(var(--ty)) scale(var(--ts));
+    transform-style: preserve-3d;
+    transition: transform 0.22s cubic-bezier(0.23,1,0.32,1), box-shadow 0.22s, border-color 0.22s;
     overflow: hidden;
-    backdrop-filter: var(--blur);
+    backdrop-filter: blur(14px) saturate(1.6);
+    -webkit-backdrop-filter: blur(14px) saturate(1.6);
+    will-change: transform;
   }
+  /* Reflet spéculaire haut */
+  .tile::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at var(--gx) var(--gy), rgba(255,255,255,0.22) 0%, transparent 65%);
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: 1;
+    transition: opacity 0.2s;
+    opacity: 0;
+  }
+  .tile:hover::before, .tile.tilt-active::before { opacity: 1; }
+  /* Bord lumineux */
+  .tile::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    border: 1px solid rgba(255,255,255,0.25);
+    pointer-events: none;
+    z-index: 2;
+    opacity: 0;
+    transition: opacity 0.22s;
+  }
+  .tile:hover::after, .tile.tilt-active::after { opacity: 1; }
+
   .tile.animate-in { animation: tileIn 0.32s ease both; }
   .tile:hover {
-    transform: translateY(-4px) scale(1.02);
-    box-shadow: var(--shadow);
+    --ts: 1.02;
+    box-shadow: var(--shadow), 0 0 0 1px rgba(255,255,255,0.1) inset;
     border-color: var(--accent);
   }
-  .tiles.magnify-active .tile:hover { transform: none; box-shadow: none; border-color: var(--border); }
+  .tiles.magnify-active .tile:hover {
+    --ts: 1;
+    box-shadow: none;
+    border-color: rgba(255,255,255,0.14);
+  }
 
   .tile-top {
     width: 100%;
@@ -1319,6 +1359,44 @@ function togglePin(tileId, e) {
   });
 }
 
+function bindTile3D(el, glow) {
+  const MAX_TILT = 14;
+
+  function applyTilt(clientX, clientY) {
+    const r = el.getBoundingClientRect();
+    const cx = r.left + r.width / 2;
+    const cy = r.top + r.height / 2;
+    const rx = ((clientY - cy) / (r.height / 2)) * -MAX_TILT;
+    const ry = ((clientX - cx) / (r.width / 2)) * MAX_TILT;
+    const gx = Math.round(((clientX - r.left) / r.width) * 100);
+    const gy = Math.round(((clientY - r.top) / r.height) * 100);
+    el.style.setProperty('--tx', rx.toFixed(1) + 'deg');
+    el.style.setProperty('--ty', ry.toFixed(1) + 'deg');
+    el.style.setProperty('--gx', gx + '%');
+    el.style.setProperty('--gy', gy + '%');
+    el.style.boxShadow = '0 0 0 2px ' + glow + ', 0 20px 40px rgba(0,0,0,0.35)';
+    el.classList.add('tilt-active');
+  }
+
+  function resetTilt() {
+    el.style.setProperty('--tx', '0deg');
+    el.style.setProperty('--ty', '0deg');
+    el.style.setProperty('--gx', '50%');
+    el.style.setProperty('--gy', '50%');
+    el.style.boxShadow = '';
+    el.classList.remove('tilt-active');
+  }
+
+  el.addEventListener('mousemove', e => applyTilt(e.clientX, e.clientY));
+  el.addEventListener('mouseleave', resetTilt);
+
+  el.addEventListener('touchmove', e => {
+    applyTilt(e.touches[0].clientX, e.touches[0].clientY);
+  }, { passive: true });
+  el.addEventListener('touchend', resetTilt);
+  el.addEventListener('touchcancel', resetTilt);
+}
+
 function makeTileNode(tile, opts) {
   opts = opts || {};
   const grad = tileGradient(tile.id);
@@ -1354,8 +1432,7 @@ function makeTileNode(tile, opts) {
     '<button class="tile-pin-btn ' + (isPinned ? 'pinned' : '') + '" title="' + (isPinned ? 'Retirer des favoris' : 'Épingler') + '" onclick="togglePin(\'' + tile.id + '\',event)">' + (isPinned ? '★' : '☆') + '</button>' +
     (!opts.pinned ? '<button class="tile-edit-btn" title="Modifier" onclick="editTile(event,\'' + tile.id + '\')">✎</button>' : '');
 
-  a.addEventListener('mouseenter', () => { a.style.boxShadow = '0 0 0 2px ' + glow + ', 0 20px 40px rgba(0,0,0,0.3)'; });
-  a.addEventListener('mouseleave', () => { a.style.boxShadow = ''; });
+  bindTile3D(a, glow);
   if (!opts.pinned) {
     a.addEventListener('click', e => { if (didDrag) { e.preventDefault(); e.stopPropagation(); } });
   }
