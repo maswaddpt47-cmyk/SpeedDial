@@ -319,6 +319,7 @@
     box-shadow: var(--shadow);
     border-color: var(--accent);
   }
+  .tiles.magnify-active .tile:hover { transform: none; box-shadow: none; border-color: var(--border); }
 
   .tile-top {
     width: 100%;
@@ -1458,6 +1459,38 @@ function initDockMagnify(bar) {
   bar.addEventListener('touchcancel', resetMagnify);
 }
 
+function initTilesMagnify(grid) {
+  const MAX_SCALE = 1.18;
+  const RADIUS = 150;
+
+  function applyMagnify(clientX, clientY) {
+    grid.classList.add('magnify-active');
+    [...grid.querySelectorAll('.tile')].forEach(tile => {
+      const r = tile.getBoundingClientRect();
+      const cx = r.left + r.width / 2;
+      const cy = r.top + r.height / 2;
+      const dist = Math.sqrt((clientX - cx) ** 2 + (clientY - cy) ** 2);
+      const scale = dist < RADIUS ? 1 + (MAX_SCALE - 1) * Math.pow(1 - dist / RADIUS, 1.8) : 1;
+      tile.style.transform = scale > 1.01 ? `scale(${scale.toFixed(3)})` : '';
+    });
+  }
+
+  function reset() {
+    grid.classList.remove('magnify-active');
+    [...grid.querySelectorAll('.tile')].forEach(t => { t.style.transform = ''; });
+  }
+
+  grid.addEventListener('mousemove', e => applyMagnify(e.clientX, e.clientY));
+  grid.addEventListener('mouseleave', reset);
+
+  grid.addEventListener('touchmove', e => {
+    applyMagnify(e.touches[0].clientX, e.touches[0].clientY);
+  }, { passive: true });
+
+  grid.addEventListener('touchend', reset);
+  grid.addEventListener('touchcancel', reset);
+}
+
 // ── RENDER ────────────────────────────────────────────
 function render() {
   const container = document.getElementById('categoriesContainer');
@@ -1508,6 +1541,8 @@ function render() {
     addBtn.innerHTML = '<span class="tile-add-icon">+</span><span>Ajouter</span>';
     addBtn.onclick = () => openTileModal(null, cat.id);
     grid.appendChild(addBtn);
+
+    initTilesMagnify(grid);
   });
 
   animateOnce = false;
