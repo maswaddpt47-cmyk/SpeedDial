@@ -926,6 +926,65 @@
     .pinned-section { bottom: 12px; }
   }
 
+  /* ── MENU CONTEXTUEL ── */
+  .ctx-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 500;
+  }
+  .ctx-menu {
+    display: none;
+    position: fixed;
+    bottom: -100%;
+    left: 16px; right: 16px;
+    background: var(--modal-bg);
+    border: 1px solid var(--border);
+    border-radius: 20px 20px 16px 16px;
+    padding: 8px 8px 16px;
+    z-index: 501;
+    box-shadow: 0 -8px 40px rgba(0,0,0,0.4);
+    transition: bottom 0.28s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .ctx-menu.open {
+    display: block;
+    bottom: 16px;
+  }
+  .ctx-overlay.open { display: block; }
+  .ctx-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    text-align: center;
+    padding: 12px 16px 8px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .ctx-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    padding: 14px 18px;
+    background: none;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+    text-align: left;
+    transition: background 0.15s;
+  }
+  .ctx-item:hover, .ctx-item:active { background: var(--surface-hover); }
+  .ctx-item.danger { color: #ff5f5f; }
+  .ctx-item span:first-child { font-size: 18px; width: 24px; text-align: center; }
+  .ctx-sep { height: 1px; background: var(--border); margin: 4px 8px; }
+
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--surface); border-radius: 3px; }
@@ -1188,6 +1247,22 @@
   </div>
 </div>
 
+<!-- Menu contextuel appui long -->
+<div class="ctx-overlay" id="ctxOverlay" onclick="closeCtxMenu()"></div>
+<div class="ctx-menu" id="ctxMenu">
+  <div class="ctx-title" id="ctxTitle"></div>
+  <button class="ctx-item" id="ctxPin" onclick="ctxAction('pin')">
+    <span id="ctxPinIcon">☆</span><span id="ctxPinLabel">Épingler</span>
+  </button>
+  <button class="ctx-item" id="ctxEdit" onclick="ctxAction('edit')">
+    <span>✎</span><span>Modifier</span>
+  </button>
+  <div class="ctx-sep"></div>
+  <button class="ctx-item danger" onclick="ctxAction('delete')">
+    <span>🗑</span><span>Supprimer</span>
+  </button>
+</div>
+
 <script>
 // ── THEMES ──────────────────────────────────────────────
 const THEMES = {
@@ -1382,6 +1457,60 @@ function togglePin(tileId, e) {
   });
 }
 
+// ── MENU CONTEXTUEL (appui long) ─────────────────────
+let ctxTile = null;
+
+function openCtxMenu(tile) {
+  ctxTile = tile;
+  const isPinned = data.pinned.includes(tile.id);
+  document.getElementById('ctxTitle').textContent = tile.name;
+  document.getElementById('ctxPinIcon').textContent = isPinned ? '★' : '☆';
+  document.getElementById('ctxPinLabel').textContent = isPinned ? 'Désépingler' : 'Épingler';
+  document.getElementById('ctxOverlay').classList.add('open');
+  const menu = document.getElementById('ctxMenu');
+  menu.style.display = 'block';
+  requestAnimationFrame(() => menu.classList.add('open'));
+}
+
+function closeCtxMenu() {
+  const menu = document.getElementById('ctxMenu');
+  menu.classList.remove('open');
+  document.getElementById('ctxOverlay').classList.remove('open');
+  setTimeout(() => { menu.style.display = 'none'; }, 300);
+  ctxTile = null;
+}
+
+function ctxAction(action) {
+  if (!ctxTile) return;
+  const tile = ctxTile;
+  closeCtxMenu();
+  if (action === 'pin')    togglePin(tile.id, null);
+  if (action === 'edit')   setTimeout(() => editTile(null, tile.id), 320);
+  if (action === 'delete') setTimeout(() => promptDeleteTile(tile.id), 320);
+}
+
+function bindLongPress(el, tile) {
+  let timer = null;
+  let moved = false;
+
+  el.addEventListener('touchstart', e => {
+    moved = false;
+    timer = setTimeout(() => {
+      if (!moved) {
+        navigator.vibrate && navigator.vibrate(40);
+        openCtxMenu(tile);
+      }
+    }, 500);
+  }, { passive: true });
+
+  el.addEventListener('touchmove', () => { moved = true; clearTimeout(timer); }, { passive: true });
+  el.addEventListener('touchend',    () => clearTimeout(timer), { passive: true });
+  el.addEventListener('touchcancel', () => clearTimeout(timer), { passive: true });
+
+  // Clic droit sur desktop
+  el.addEventListener('contextmenu', e => { e.preventDefault(); openCtxMenu(tile); });
+}
+
 function bindTile3D(el, glow) {
   const MAX_TILT = 14;
 
@@ -1456,6 +1585,7 @@ function makeTileNode(tile, opts) {
     (!opts.pinned ? '<button class="tile-edit-btn" title="Modifier" onclick="editTile(event,\'' + tile.id + '\')">✎</button>' : '');
 
   bindTile3D(a, glow);
+  bindLongPress(a, tile);
   if (!opts.pinned) {
     a.addEventListener('click', e => { if (didDrag) { e.preventDefault(); e.stopPropagation(); } });
   }
@@ -1751,7 +1881,15 @@ function deleteCurrentTile() {
   if (!currentTileId) return;
   if (!confirm('Supprimer ce raccourci ?')) return;
   data.tiles = data.tiles.filter(t => t.id !== currentTileId);
+  data.pinned = data.pinned.filter(id => id !== currentTileId);
   save(); render(); closeTileModal();
+}
+
+function promptDeleteTile(tileId) {
+  if (!confirm('Supprimer ce raccourci ?')) return;
+  data.tiles = data.tiles.filter(t => t.id !== tileId);
+  data.pinned = data.pinned.filter(id => id !== tileId);
+  save(); render();
 }
 
 // ── CATEGORY MODAL ────────────────────────────────────
