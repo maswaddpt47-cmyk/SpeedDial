@@ -2020,6 +2020,7 @@ function importData(e) {
       const imported = JSON.parse(ev.target.result);
       if (imported.categories && imported.tiles) {
         data = imported;
+        if (!data.pinned) data.pinned = [];
         animateOnce = true;
         save(); render();
         showToast('✓ ' + imported.tiles.length + ' raccourcis importés dans ' + imported.categories.length + ' catégories');
