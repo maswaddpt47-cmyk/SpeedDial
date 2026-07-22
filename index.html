@@ -162,24 +162,51 @@
     gap: 6px;
     padding: 8px 14px;
     border-radius: 8px;
-    border: none;
+    border: 1px solid transparent;
     cursor: pointer;
     font-family: 'DM Sans', sans-serif;
     font-size: 13px;
     font-weight: 500;
-    transition: all 0.18s;
+    transition: all 0.15s;
     white-space: nowrap;
+    position: relative;
+    user-select: none;
   }
+  .btn:active { transform: translateY(1px) !important; filter: brightness(0.93) !important; box-shadow: none !important; }
   .btn-ghost {
-    background: var(--surface);
+    background: linear-gradient(180deg, var(--surface-hover, rgba(255,255,255,0.13)) 0%, var(--surface) 100%);
     color: var(--muted);
-    border: 1px solid var(--border);
+    border-color: var(--border);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2), 0 1px 0 rgba(255,255,255,0.08) inset;
   }
-  .btn-ghost:hover { background: var(--surface-hover); color: var(--text); }
-  .btn-primary { background: var(--accent); color: #fff; }
-  .btn-primary:hover { filter: brightness(1.12); transform: translateY(-1px); }
-  .btn-danger { background: #f75f5f; color: #fff; }
-  .btn-danger:hover { filter: brightness(1.1); }
+  .btn-ghost:hover {
+    background: linear-gradient(180deg, var(--surface-hover) 0%, var(--surface-hover) 100%);
+    color: var(--text);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.24), 0 1px 0 rgba(255,255,255,0.1) inset;
+    transform: translateY(-1px);
+  }
+  .btn-primary {
+    background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 75%, white) 0%, var(--accent) 100%);
+    color: #fff;
+    border-color: color-mix(in srgb, var(--accent) 60%, black);
+    box-shadow: 0 2px 6px color-mix(in srgb, var(--accent) 40%, transparent), 0 1px 0 rgba(255,255,255,0.22) inset;
+  }
+  .btn-primary:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--accent) 50%, transparent), 0 1px 0 rgba(255,255,255,0.22) inset;
+  }
+  .btn-danger {
+    background: linear-gradient(180deg, #ff7272 0%, #f75f5f 100%);
+    color: #fff;
+    border-color: #c94040;
+    box-shadow: 0 2px 6px rgba(247,95,95,0.38), 0 1px 0 rgba(255,255,255,0.15) inset;
+  }
+  .btn-danger:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(247,95,95,0.5), 0 1px 0 rgba(255,255,255,0.15) inset;
+  }
 
   /* ── HERO ── */
   .hero {
@@ -1184,6 +1211,103 @@
     z-index: 29;
   }
   .theme-drawer-overlay.open { display: block; }
+
+  /* ── COMPTEUR DE VISITES ── */
+  .tile-visit-badge {
+    position: absolute;
+    bottom: 36px; right: 7px;
+    background: rgba(0,0,0,0.46);
+    color: rgba(255,255,255,0.8);
+    font-size: 9px; font-weight: 700;
+    padding: 1px 5px; border-radius: 8px;
+    line-height: 14px; pointer-events: none; z-index: 3;
+    letter-spacing: 0.02em;
+  }
+
+  /* ── VUE LISTE ── */
+  .tiles.list-view {
+    display: flex; flex-direction: column; gap: 5px;
+    grid-template-columns: unset;
+  }
+  .tiles.list-view .tile {
+    flex-direction: row; border-radius: 11px;
+    align-items: center; min-height: 0;
+  }
+  .tiles.list-view .tile-top {
+    width: 44px; height: 44px; border-radius: 9px 0 0 9px; flex-shrink: 0;
+  }
+  .tiles.list-view .tile-body { padding: 8px 14px; flex: 1; text-align: left; }
+  .tiles.list-view .tile-title { white-space: nowrap; text-align: left; }
+  .tiles.list-view .tile-pin-btn  { top: 50%; left: auto; right: 28px; transform: translateY(-50%); }
+  .tiles.list-view .tile-edit-btn { top: 50%; transform: translateY(-50%); }
+  .tiles.list-view .tile-visit-badge { bottom: auto; top: 50%; transform: translateY(-50%); right: 58px; }
+
+  /* ── CATÉGORIES REPLIABLES ── */
+  .category.collapsed .tiles { display: none; }
+  .cat-collapse-btn {
+    background: none; border: none; cursor: pointer;
+    color: var(--muted); font-size: 13px; padding: 2px 5px;
+    border-radius: 4px; transition: color 0.15s, background 0.15s, transform 0.18s;
+    line-height: 1; display: inline-flex; align-items: center; justify-content: center;
+  }
+  .cat-collapse-btn:hover { color: var(--text); background: var(--surface); }
+  .category.collapsed .cat-collapse-btn { transform: rotate(-90deg); color: var(--accent); }
+
+  /* ── FILTRE CATÉGORIES ── */
+  .cat-filter-wrap {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 18px;
+  }
+  .cat-filter {
+    flex: 1; max-width: 300px;
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 7px 14px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif; font-size: 13px;
+    outline: none; transition: border-color 0.18s;
+  }
+  .cat-filter:focus { border-color: var(--accent); }
+  .cat-filter::placeholder { color: var(--muted); }
+
+  /* ── SWIPE TO DELETE (mobile) ── */
+  .tile-swipe-del-btn {
+    position: absolute; top: 0; right: 0; bottom: 0;
+    width: 64px; border-radius: 0 16px 16px 0;
+    background: #f75f5f;
+    border: none; color: #fff; font-size: 18px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; z-index: 5;
+    transform: translateX(100%);
+    transition: transform 0.18s;
+  }
+  .tile.swipe-revealed { overflow: visible; }
+  .tile.swipe-revealed .tile-swipe-del-btn { transform: translateX(0); }
+
+  /* ── COLOR PICKER CATÉGORIE ── */
+  .cat-color-popup {
+    position: fixed; z-index: 700;
+    background: var(--modal-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px; padding: 10px;
+    display: flex; flex-wrap: wrap; gap: 6px;
+    width: 154px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.45);
+    animation: palIn .14s ease;
+  }
+  .cat-color-swatch {
+    width: 26px; height: 26px; border-radius: 50%;
+    cursor: pointer; border: 2px solid transparent;
+    transition: border-color 0.15s, transform 0.1s;
+    flex-shrink: 0;
+  }
+  .cat-color-swatch:hover { transform: scale(1.18); }
+  .cat-color-swatch.active { border-color: var(--text); }
+  .cat-dot { cursor: pointer; transition: transform 0.15s; }
+  .cat-dot:hover { transform: scale(1.4); }
+
+  /* ── VUE LISTE btn ── */
+  #listViewBtn { font-size: 16px; padding: 8px 11px; }
 </style>
 </head>
 <body>
@@ -1201,6 +1325,7 @@
     <label class="btn btn-ghost" style="cursor:pointer" title="Importer">↑ <span>Import</span><input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)"></label>
     <button class="btn btn-ghost" onclick="openCatModal()" title="Nouvelle catégorie">+ <span>Catégorie</span></button>
     <button class="btn btn-ghost" id="editModeBtn" onclick="toggleEditMode()" title="Mode édition (E)">✎ <span>Éditer</span></button>
+    <button class="btn btn-ghost" id="listViewBtn" onclick="toggleListView()" title="Vue liste / grille">⊞</button>
     <button class="burger-btn" onclick="toggleThemeDrawer()" title="Changer de thème">🎨</button>
   </div>
 </header>
@@ -1252,6 +1377,10 @@
 </div>
 
 <main>
+  <div class="cat-filter-wrap">
+    <input type="text" class="cat-filter" id="catFilterInput" placeholder="🔍 Filtrer les catégories…" oninput="filterCats(this.value)" autocomplete="off">
+    <button class="btn btn-ghost" onclick="document.getElementById('catFilterInput').value='';filterCats('')" style="padding:7px 10px;font-size:13px">✕</button>
+  </div>
   <div class="categories" id="categoriesContainer"></div>
 </main>
 <div class="cat-pager" id="catPager"></div>
@@ -1456,7 +1585,10 @@ const DEFAULT = {
 };
 
 let data = JSON.parse(localStorage.getItem('speeddial_data') || 'null') || DEFAULT;
-if (!data.pinned) data.pinned = [];
+if (!data.pinned)    data.pinned    = [];
+if (!data.visits)    data.visits    = {};
+if (!data.collapsed) data.collapsed = {};
+if (!data.catColors) data.catColors = {};
 let animateOnce = true;
 
 function save() {
@@ -1616,6 +1748,7 @@ function makeTileNode(tile, opts) {
   const fav  = getFaviconUrl(tile.url);
   const initial = tile.name.trim().charAt(0).toUpperCase();
   const isPinned = data.pinned.includes(tile.id);
+  const visits = (data.visits && data.visits[tile.id]) || 0;
 
   let topContent;
   if (tile.img) {
@@ -1642,12 +1775,27 @@ function makeTileNode(tile, opts) {
     '<div class="tile-top" style="background:' + grad + '">' + topContent + '</div>' +
     '<div class="tile-body"><span class="tile-title">' + tile.name + '</span></div>' +
     '<button class="tile-pin-btn ' + (isPinned ? 'pinned' : '') + '" title="' + (isPinned ? 'Retirer des favoris' : 'Épingler') + '" onclick="togglePin(\'' + tile.id + '\',event)">' + (isPinned ? '★' : '☆') + '</button>' +
-    (!opts.pinned ? '<button class="tile-edit-btn" title="Modifier" onclick="editTile(event,\'' + tile.id + '\')">✎</button>' : '');
+    (!opts.pinned ? '<button class="tile-edit-btn" title="Modifier" onclick="editTile(event,\'' + tile.id + '\')">✎</button>' : '') +
+    (visits > 0 ? '<span class="tile-visit-badge">' + visits + '</span>' : '') +
+    (!opts.pinned ? '<button class="tile-swipe-del-btn" onclick="event.preventDefault();event.stopPropagation();promptDeleteTile(\'' + tile.id + '\')">🗑</button>' : '');
 
   bindTile3D(a, glow);
   bindLongPress(a, tile);
   if (!opts.pinned) {
-    a.addEventListener('click', e => { if (didDrag) { e.preventDefault(); e.stopPropagation(); } });
+    a.addEventListener('click', e => {
+      if (didDrag) { e.preventDefault(); e.stopPropagation(); return; }
+      data.visits = data.visits || {};
+      data.visits[tile.id] = (data.visits[tile.id] || 0) + 1;
+      save();
+      let badge = a.querySelector('.tile-visit-badge');
+      if (!badge) {
+        badge = document.createElement('span');
+        badge.className = 'tile-visit-badge';
+        a.appendChild(badge);
+      }
+      badge.textContent = data.visits[tile.id];
+    });
+    bindSwipeDel(a, tile);
   }
   bindTileTooltip(a, tile);
   return a;
@@ -1798,24 +1946,27 @@ function render() {
   let delay = 0;
   data.categories.forEach(cat => {
     const tiles = data.tiles.filter(t => t.cat === cat.id);
-    const catHue = hueFor(cat.id);
+    const catHue = (data.catColors && data.catColors[cat.id] !== undefined) ? data.catColors[cat.id] : hueFor(cat.id);
     const dotColor = 'oklch(0.72 0.15 ' + catHue + ')';
 
     const sec = document.createElement('div');
     sec.className = 'category';
     sec.dataset.catId = cat.id;
+    const isCollapsed = data.collapsed && data.collapsed[cat.id];
     sec.innerHTML =
       '<div class="category-header">' +
         '<span class="drag-handle" data-cat-handle="' + cat.id + '" title="Glisser pour réordonner">⠿</span>' +
-        '<span class="cat-dot" style="background:' + dotColor + '"></span>' +
+        '<span class="cat-dot" style="background:' + dotColor + '" title="Changer la couleur" onclick="openCatColorPicker(\'' + cat.id + '\',this)"></span>' +
         '<span class="category-name">' + cat.name + '</span>' +
         '<div class="category-line"></div>' +
         '<div class="cat-actions">' +
+          '<button class="cat-collapse-btn" title="Réduire/développer" onclick="toggleCatCollapse(\'' + cat.id + '\')">▾</button>' +
           '<button class="cat-btn" title="Renommer" onclick="editCat(\'' + cat.id + '\')">✎</button>' +
           '<button class="cat-btn danger" title="Supprimer" onclick="promptDeleteCat(\'' + cat.id + '\')">✕</button>' +
         '</div>' +
       '</div>' +
       '<div class="tiles" id="tiles-' + cat.id + '"></div>';
+    if (isCollapsed) sec.classList.add('collapsed');
     container.appendChild(sec);
 
     const grid = sec.querySelector('#tiles-' + cat.id);
@@ -1842,14 +1993,41 @@ function render() {
   bindDragDrop();
   renderPinned();
   buildCatPager();
+  applyListView();
 }
 
 // ── SEARCH ────────────────────────────────────────────
+function filterTilesLive(q) {
+  const query = q.trim().toLowerCase();
+  document.querySelectorAll('.category').forEach(sec => {
+    const catId = sec.dataset.catId;
+    const tiles = [...sec.querySelectorAll('.tile[data-tile-id]')];
+    let anyVisible = false;
+    tiles.forEach(el => {
+      const tid = el.dataset.tileId;
+      const tile = data.tiles.find(t => t.id === tid);
+      const match = !query || (tile && (tile.name.toLowerCase().includes(query) || tile.url.toLowerCase().includes(query)));
+      el.style.display = match ? '' : 'none';
+      if (match) anyVisible = true;
+    });
+    sec.style.display = (!query || anyVisible) ? '' : 'none';
+  });
+}
+
+document.getElementById('searchInput').addEventListener('input', e => {
+  filterTilesLive(e.target.value);
+});
+
 document.getElementById('searchInput').addEventListener('keydown', e => {
   if (e.key === 'Enter') {
     const q = e.target.value.trim();
-    if (q) window.open('https://www.google.com/search?q=' + encodeURIComponent(q), '_blank');
+    if (!q) return;
+    // If tiles are visible → open first match; else → Google
+    const first = document.querySelector('.tile[data-tile-id]:not([style*="display: none"])');
+    if (first && first.href) { window.open(first.href, '_blank', 'noopener'); }
+    else { window.open('https://www.google.com/search?q=' + encodeURIComponent(q), '_blank'); }
   }
+  if (e.key === 'Escape') { e.target.value = ''; filterTilesLive(''); }
 });
 
 // ── TILE MODAL ────────────────────────────────────────
@@ -1921,8 +2099,7 @@ function openTileModal(tileId, catId) {
 function closeTileModal() { document.getElementById('tileModal').classList.remove('open'); }
 
 function editTile(e, tileId) {
-  e.preventDefault();
-  e.stopPropagation();
+  if (e) { e.preventDefault(); e.stopPropagation(); }
   openTileModal(tileId, null);
 }
 
@@ -2451,6 +2628,154 @@ function initDockDrag(bar) {
   });
 }
 
+// ── VUE LISTE / GRILLE ────────────────────────────────
+let listView = localStorage.getItem('speeddial_listview') === '1';
+function toggleListView() {
+  listView = !listView;
+  localStorage.setItem('speeddial_listview', listView ? '1' : '0');
+  applyListView();
+}
+function applyListView() {
+  document.querySelectorAll('.tiles').forEach(g => g.classList.toggle('list-view', listView));
+  const btn = document.getElementById('listViewBtn');
+  if (btn) { btn.innerHTML = listView ? '⊟' : '⊞'; btn.title = listView ? 'Vue grille' : 'Vue liste'; }
+}
+
+// ── CATÉGORIES REPLIABLES ─────────────────────────────
+function toggleCatCollapse(catId) {
+  data.collapsed = data.collapsed || {};
+  data.collapsed[catId] = !data.collapsed[catId];
+  save();
+  const sec = document.querySelector('.category[data-cat-id="' + catId + '"]');
+  if (sec) sec.classList.toggle('collapsed', !!data.collapsed[catId]);
+}
+
+// ── FILTRE CATÉGORIES ─────────────────────────────────
+function filterCats(q) {
+  const query = q.trim().toLowerCase();
+  document.querySelectorAll('.category').forEach(sec => {
+    const name = (sec.querySelector('.category-name') || {}).textContent || '';
+    sec.style.display = (!query || name.toLowerCase().includes(query)) ? '' : 'none';
+  });
+}
+
+// ── COULEUR CATÉGORIE ─────────────────────────────────
+function openCatColorPicker(catId, dotEl) {
+  document.getElementById('_catColorPop') && document.getElementById('_catColorPop').remove();
+  const hues = [0, 20, 40, 60, 90, 130, 165, 200, 230, 260, 290, 320];
+  const popup = document.createElement('div');
+  popup.id = '_catColorPop';
+  popup.className = 'cat-color-popup';
+  hues.forEach(h => {
+    const sw = document.createElement('div');
+    sw.className = 'cat-color-swatch' + ((data.catColors[catId] === h) ? ' active' : '');
+    sw.style.background = 'oklch(0.72 0.15 ' + h + ')';
+    sw.title = h + '°';
+    sw.onclick = e => { e.stopPropagation(); setCatColor(catId, h); };
+    popup.appendChild(sw);
+  });
+  const autoSw = document.createElement('div');
+  autoSw.className = 'cat-color-swatch' + (data.catColors[catId] === undefined ? ' active' : '');
+  autoSw.style.background = 'conic-gradient(from 0deg,oklch(0.72 0.15 0),oklch(0.72 0.15 120),oklch(0.72 0.15 240),oklch(0.72 0.15 360))';
+  autoSw.title = 'Auto';
+  autoSw.onclick = e => { e.stopPropagation(); setCatColor(catId, null); };
+  popup.appendChild(autoSw);
+  document.body.appendChild(popup);
+  const r = dotEl.getBoundingClientRect();
+  popup.style.top  = Math.min(r.bottom + 6, window.innerHeight - 120) + 'px';
+  popup.style.left = Math.min(r.left, window.innerWidth - 160) + 'px';
+  setTimeout(() => document.addEventListener('click', closeCatColorPicker, { once: true }), 10);
+}
+function closeCatColorPicker() {
+  const p = document.getElementById('_catColorPop');
+  if (p) p.remove();
+}
+function setCatColor(catId, hue) {
+  if (hue === null) { delete data.catColors[catId]; }
+  else { data.catColors[catId] = hue; }
+  save(); render(); closeCatColorPicker();
+}
+
+// ── SWIPE TO DELETE ───────────────────────────────────
+function bindSwipeDel(el, tile) {
+  let startX = 0, startY = 0, active = false;
+  el.addEventListener('touchstart', e => {
+    startX = e.touches[0].clientX; startY = e.touches[0].clientY; active = true;
+  }, { passive: true });
+  el.addEventListener('touchmove', e => {
+    if (!active) return;
+    const dx = e.touches[0].clientX - startX;
+    const dy = Math.abs(e.touches[0].clientY - startY);
+    if (dy > 30) { active = false; el.classList.remove('swipe-revealed'); return; }
+    if (dx < -52) el.classList.add('swipe-revealed');
+    else if (dx > 20) el.classList.remove('swipe-revealed');
+  }, { passive: true });
+  el.addEventListener('touchend', () => { active = false; });
+  // Close when clicking elsewhere
+  document.addEventListener('touchstart', e => {
+    if (!el.contains(e.target)) el.classList.remove('swipe-revealed');
+  }, { passive: true });
+}
+
+// ── FAVICON ANIMÉ ─────────────────────────────────────
+function startFaviconClock() {
+  const canvas = document.createElement('canvas');
+  canvas.width = canvas.height = 32;
+  const ctx = canvas.getContext('2d');
+  let link = document.querySelector('link[rel="icon"]');
+  if (!link) { link = document.createElement('link'); link.rel = 'icon'; document.head.appendChild(link); }
+  function draw() {
+    const now = new Date();
+    const hh = String(now.getHours()).padStart(2,'0');
+    const mm = String(now.getMinutes()).padStart(2,'0');
+    const accent = (getComputedStyle(document.documentElement).getPropertyValue('--accent') || '#8aa2ff').trim();
+    ctx.clearRect(0,0,32,32);
+    ctx.fillStyle = accent;
+    if (ctx.roundRect) { ctx.beginPath(); ctx.roundRect(1,1,30,30,7); ctx.fill(); }
+    else { ctx.fillRect(1,1,30,30); }
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 13px monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(hh, 10, 11);
+    ctx.fillText(mm, 22, 21);
+    ctx.fillStyle = 'rgba(255,255,255,0.55)';
+    ctx.font = 'bold 9px monospace';
+    ctx.fillText(':', 16, 15);
+    link.href = canvas.toDataURL('image/png');
+  }
+  draw();
+  setInterval(draw, 30000);
+}
+
+// ── PULL TO REFRESH (mobile) ──────────────────────────
+function initPullToRefresh() {
+  let startY = 0, pulling = false;
+  let indicator = null;
+  document.addEventListener('touchstart', e => {
+    if (window.scrollY === 0 && !document.querySelector('.modal-overlay.open, .palette-overlay.open')) {
+      startY = e.touches[0].clientY; pulling = true;
+    }
+  }, { passive: true });
+  document.addEventListener('touchmove', e => {
+    if (!pulling) return;
+    const dy = e.touches[0].clientY - startY;
+    if (dy > 60 && !indicator) {
+      indicator = document.createElement('div');
+      indicator.style.cssText = 'position:fixed;top:54px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;font-size:12px;padding:5px 16px;border-radius:20px;z-index:9998;font-family:DM Sans,sans-serif;pointer-events:none;';
+      indicator.textContent = '↓ Relâcher pour rafraîchir';
+      document.body.appendChild(indicator);
+    }
+  }, { passive: true });
+  document.addEventListener('touchend', e => {
+    if (!pulling) return;
+    const dy = e.changedTouches[0].clientY - startY;
+    pulling = false;
+    if (indicator) { indicator.remove(); indicator = null; }
+    if (dy > 80) { navigator.vibrate && navigator.vibrate(30); window.location.reload(); }
+  }, { passive: true });
+}
+
 // ── INIT ──────────────────────────────────────────────
 applyTheme(currentTheme);
 buildThemeDots();
@@ -2459,6 +2784,8 @@ updateClock();
 updateDate();
 setInterval(updateClock, 1000);
 render();
+startFaviconClock();
+initPullToRefresh();
 </script>
 </body>
 </html>
