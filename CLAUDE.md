@@ -26,6 +26,7 @@
 ### Priorité haute
 
 1. Ne jamais présenter une explication technique plausible comme un fait : marquer explicitement "hypothèse non vérifiée" tant qu'aucune preuve (log, capture, test réel) ne la confirme.
+1bis. Utiliser des dates explicites (JJ/MM ou JJ/MM/AAAA) plutôt que des termes relatifs ("hier", "aujourd'hui", "demain", "la semaine dernière") — la perception du temps vient d'un contexte injecté en début de session, pas d'une horloge en temps réel, et devient peu fiable sur une session qui s'étale sur plusieurs jours ou reprises.
 2. Ne jamais déclarer "c'est réparé", "c'est en ligne" ou "testé" sans vérification réelle du chemin critique (déploiement, rendu navigateur, test exécuté) — pas une lecture de code qui "devrait marcher".
 3. Sur toute demande d'audit ou de correction d'un bug, livrer un audit systématique (tous les points d'impact) avant la première correction.
 4. Signaler explicitement toute déviation d'une spec ou toute décision de design prise seul, au moment où elle est prise — jamais en note après coup.
