@@ -1,4 +1,4 @@
-const CACHE = 'speeddial-v3';
+const CACHE = 'speeddial-v4';
 const ASSETS = [
   '/SpeedDial/',
   '/SpeedDial/index.html',
@@ -26,16 +26,12 @@ self.addEventListener('fetch', e => {
   if (!e.request.url.startsWith(self.location.origin)) return;
 
   e.respondWith(
-    caches.match(e.request).then(cached => {
-      if (cached) return cached;
-      return fetch(e.request).then(resp => {
-        // Mettre en cache les réponses valides de notre origin
-        if (resp && resp.status === 200 && resp.type === 'basic') {
-          const clone = resp.clone();
-          caches.open(CACHE).then(c => c.put(e.request, clone));
-        }
-        return resp;
-      });
-    }).catch(() => caches.match('/SpeedDial/'))
-  );
+    fetch(e.request).then(resp => {
+      if (resp && resp.status === 200 && resp.type === 'basic') {
+        const clone = resp.clone();
+        caches.open(CACHE).then(c => c.put(e.request, clone));
+      }
+      return resp;
+    }).catch(() => caches.match(e.request).then(c => c || caches.match('/SpeedDial/')))
+  );;
 });
