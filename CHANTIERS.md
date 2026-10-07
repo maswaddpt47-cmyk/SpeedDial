@@ -15,27 +15,22 @@ Aucune pour l'instant.
 
 1. **Vérifier sur le vrai GitHub** (testé seulement avec une fausse API, le
    sandbox n'a pas accès à GitHub) : la bannière « sauvegarde plus récente »
-   et la liste de « Mes repos ». Seule la sauvegarde manuelle est confirmée
-   par l'utilisateur (07/10/2026).
-2. **« Mes repos » avec un token configuré — hypothèse non vérifiée** : avec
-   un token, l'import interroge `/user/repos`. Un token à grain fin limité au
-   seul dépôt de sauvegarde pourrait ne renvoyer que ce dépôt (exclu par le
-   filtre « backup ») et afficher « Aucun repo ». Si l'utilisateur constate
-   une liste vide : interroger aussi `/users/<compte>/repos` sans token et
-   fusionner.
-3. **Barre latérale masquée sous 820 px** : « Nouvelle catégorie »,
+   (elle n'apparaît qu'après une sauvegarde faite depuis un autre appareil).
+   Confirmés par l'utilisateur le 07/10/2026 : la sauvegarde manuelle et la
+   liste de « Mes repos » (avec le token configuré).
+2. **Barre latérale masquée sous 820 px** : « Nouvelle catégorie »,
    « Sauvegarde » et « Mes repos » sont inaccessibles sur téléphone en
    portrait (le bouton « + Catégorie » de l'en-tête a été retiré à la demande
    de l'utilisateur le 07/10/2026).
-4. **Glisser-déposer au toucher** : le glisser-déposer natif du navigateur ne
+3. **Glisser-déposer au toucher** : le glisser-déposer natif du navigateur ne
    marche en général pas sur mobile ; non testé sur téléphone.
-5. **Jeton GitHub en `localStorage`** (clé `speeddial_modern_v1_gh_token`) sur
+4. **Jeton GitHub en `localStorage`** (clé `speeddial_modern_v1_gh_token`) sur
    l'origine `maswaddpt47-cmyk.github.io`, **partagée** avec les autres
    applis du compte : une faille d'injection dans l'une d'elles peut le lire.
    Atténué : jeton à grain fin, limité au dépôt de sauvegarde (Contents
    lecture/écriture), avec expiration à renouveler et à recoller sur chaque
    appareil.
-6. **Mineur RGPD** : les favicons passent par `google.com/s2/favicons` (le
+5. **Mineur RGPD** : les favicons passent par `google.com/s2/favicons` (le
    domaine de chaque tuile est transmis à Google). Pas de solution retenue.
 
 ## Points à ne pas défaire
