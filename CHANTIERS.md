@@ -9,13 +9,11 @@ ne doit pas être défait remonte dans la dernière section.
 
 ## Décisions à trancher
 
-- **Fonctions de l'ancienne version non reprises** (proposé le 07/10/2026,
-  sans réponse) : compteur de visites, catégories repliables, couleur de
-  catégorie. Un import de l'ancien fichier les ignore sans erreur. Recréer
-  ou abandonner ?
-- **Compte GitHub en dur** : `maswaddpt47-cmyk` reste la valeur par défaut du
-  dépôt de sauvegarde et du propriétaire pour « Mes repos » (proposé le
-  07/10/2026 de l'enlever, sans réponse).
+- **Fonctions de l'ancienne version restant à trancher** (proposé le
+  07/10/2026) : catégories repliables (un clic sur le titre masque les tuiles
+  de la catégorie) et couleur de catégorie. Réponse de l'utilisateur
+  incomplète le 07/10/2026 (« pas touché aux… », phrase coupée) : à
+  reconfirmer. Un import de l'ancien fichier ignore ces champs sans erreur.
 
 ## Chantiers restants (par priorité)
 
@@ -46,6 +44,11 @@ ne doit pas être défait remonte dans la dernière section.
 
 ## Points à ne pas défaire
 
+- **Compteur de visites : ne pas le recréer** (décision de l'utilisateur,
+  07/10/2026). Le champ \`visits\` d'un ancien fichier est ignoré.
+- **Aucun nom de compte GitHub en dur** dans l'application (retiré le
+  07/10/2026) : le dépôt de sauvegarde est saisi par l'utilisateur, et « Mes
+  repos » en déduit le propriétaire.
 - **Aucune donnée personnelle dans un repo public ni dans le code** : les
   sauvegardes partent vers un dépôt **privé** dédié (`speeddial-backups`, passé
   en privé le 07/10/2026 après avoir été public un moment : l'historique de
