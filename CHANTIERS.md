@@ -9,11 +9,7 @@ ne doit pas être défait remonte dans la dernière section.
 
 ## Décisions à trancher
 
-- **Couleur de catégorie** (choix de la couleur du point devant le titre,
-  fonction de l'ancienne version) : non recréée. La demande de l'utilisateur
-  du 07/10/2026 (« une option couleur sable ») a été comprise comme le
-  **thème Sable**, livré. À confirmer si une couleur par catégorie est aussi
-  voulue.
+Aucune pour l'instant.
 
 ## Chantiers restants (par priorité)
 
@@ -44,6 +40,9 @@ ne doit pas être défait remonte dans la dernière section.
 
 ## Points à ne pas défaire
 
+- **Pas de couleur par catégorie** (décision de l'utilisateur, 07/10/2026) :
+  la couleur du point devant le titre reste calculée automatiquement. La
+  demande « option couleur sable » concernait le thème Sable, livré.
 - **Compteur de visites : ne pas le recréer** (décision de l'utilisateur,
   07/10/2026). Le champ \`visits\` d'un ancien fichier est ignoré.
 - **Aucun nom de compte GitHub en dur** dans l'application (retiré le
