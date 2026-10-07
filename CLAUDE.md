@@ -17,3 +17,31 @@
 
 - Toujours pousser directement sur `main` : `git push origin main`
 - Jamais sur une branche intermédiaire sauf instruction explicite.
+
+## Architecture
+
+- `index.html` est un bundle auto-dépaquetant (« Bundled Page ») : runtime + React + ReactDOM + polices en base64, et l'application elle-même dans un `<script type="__bundler/template">` (une seule ligne JSON, ~ligne 382). Ne jamais l'éditer à la main.
+- Pour modifier l'application : décoder cette ligne (`json.loads`), remplacer le texte voulu (assertion `count == 1`), ré-encoder avec `json.dumps(t, ensure_ascii=False).replace('</', '<\\u002F')`, puis vérifier qu'un aller-retour sur l'original donne une ligne identique.
+- Composant `Component extends DCLogic` : `renderVals()` fournit les valeurs au gabarit (`sc-if`, `sc-for`, `sc-camel-on-<évènement>`). L'ancienne version vanilla de `index.html` reste dans l'historique git (commit `79346d7`).
+- `sw.js` : réseau d'abord, cache de secours hors ligne. Incrémenter `CACHE` (actuellement `speeddial-v4`) à chaque changement de logique du service worker.
+- Aucune URL personnelle en dur : `DEFAULT` démarre avec une catégorie « Général » vide.
+
+## Données (localStorage)
+
+- `speeddial_modern_v1` : `{ cats, tiles, pins }` (tuile = `id, name, url, cat, img`).
+- `speeddial_modern_v1_theme`, `_view` (`grid` / `list` / `compact`), `_gh_repo`, `_gh_token`, `_gh_last`.
+- Export / Import JSON : format `{ categories, tiles, pins }` ; l'ancien format (`pinned`, `visits`, `collapsed`, `catColors`) est accepté, les champs inconnus sont ignorés.
+
+## Fonctions
+
+- Tuiles : bouton ✎ toujours visible, étoile cliquable (désépingle), capture d'écran (JPEG ≤ 400×240), glisser-déposer (réordonner / changer de catégorie), recherche par nom, URL ou catégorie.
+- Vues : Grille (6 colonnes ≥ 1200 px, 4/3/2 en dessous), Liste et Compact (2 colonnes ≥ 800 px).
+- Sauvegarde GitHub (bouton « Sauvegarde ») : dépôt **privé** dédié, token fine-grained limité à ce dépôt (Contents lecture/écriture), fichiers `backups/backup-AAAA-MM-JJ-HHMM.json`, envoi automatique 20 s après chaque modification, 30 jours conservés (le plus récent toujours gardé), restauration depuis la liste.
+- Alerte « sauvegarde plus récente sur GitHub » (bannière Restaurer / Ignorer), vérifiée au chargement et au retour sur l'onglet.
+- « Mes repos » : importe en tuiles les repos du compte ayant GitHub Pages (hors archivés et hors noms contenant « backup »), en ignorant les URL déjà présentes.
+
+## Déploiement et tests
+
+- Déploiement par GitHub Actions (`.github/workflows/deploy.yml`) à chaque push sur `main`. Un échec « No artifacts named github-pages » est transitoire : relancer le workflow.
+- Après déploiement, recharger de force (Ctrl+Maj+R) ; un ancien service worker peut servir une page en cache.
+- Tests : Playwright avec `executablePath: '/opt/pw-browsers/chromium'` sur `file://…/index.html`. Le réseau vers GitHub est bloqué dans le sandbox : simuler `api.github.com` avec `page.route`.
