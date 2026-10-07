@@ -45,3 +45,7 @@
 - Déploiement par GitHub Actions (`.github/workflows/deploy.yml`) à chaque push sur `main`. Un échec « No artifacts named github-pages » est transitoire : relancer le workflow.
 - Après déploiement, recharger de force (Ctrl+Maj+R) ; un ancien service worker peut servir une page en cache.
 - Tests : Playwright avec `executablePath: '/opt/pw-browsers/chromium'` sur `file://…/index.html`. Le réseau vers GitHub est bloqué dans le sandbox : simuler `api.github.com` avec `page.route`.
+
+## Reprise de session — CHANTIERS.md
+
+Lire **`CHANTIERS.md`** (racine) au démarrage : décisions à trancher, chantiers restants, points à ne pas défaire. Le mettre à jour à chaque avancée significative, pas en fin de session. Une tâche terminée en sort ; ce qui ne doit pas être défait remonte dans sa dernière section.
