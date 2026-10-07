@@ -29,12 +29,13 @@
 ## Données (localStorage)
 
 - `speeddial_modern_v1` : `{ cats, tiles, pins }` (tuile = `id, name, url, cat, img`).
-- `speeddial_modern_v1_theme`, `_view` (`grid` / `list` / `compact`), `_gh_repo`, `_gh_token`, `_gh_last`.
+- `speeddial_modern_v1_theme` (`dark` / `light` / `sable`), `_view` (`grid` / `list` / `compact`), `_collapsed` (catégories repliées), `_gh_repo`, `_gh_token`, `_gh_last`.
 - Export / Import JSON : format `{ categories, tiles, pins }` ; l'ancien format (`pinned`, `visits`, `collapsed`, `catColors`) est accepté, les champs inconnus sont ignorés.
 
 ## Fonctions
 
 - Tuiles : bouton ✎ toujours visible, étoile cliquable (désépingle), capture d'écran (JPEG ≤ 400×240), glisser-déposer (réordonner / changer de catégorie), recherche par nom, URL ou catégorie.
+- Catégories repliables (clic sur le titre ou le chevron). Thèmes Sombre, Clair et Sable (variables CSS `[data-theme]`).
 - Vues : Grille (6 colonnes ≥ 1200 px, 4/3/2 en dessous), Liste et Compact (2 colonnes ≥ 800 px).
 - Sauvegarde GitHub (bouton « Sauvegarde ») : dépôt **privé** dédié, token fine-grained limité à ce dépôt (Contents lecture/écriture), fichiers `backups/backup-AAAA-MM-JJ-HHMM.json`, envoi automatique 20 s après chaque modification, 30 jours conservés (le plus récent toujours gardé), restauration depuis la liste.
 - Alerte « sauvegarde plus récente sur GitHub » (bannière Restaurer / Ignorer), vérifiée au chargement et au retour sur l'onglet.

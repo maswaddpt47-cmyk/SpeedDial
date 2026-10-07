@@ -9,11 +9,11 @@ ne doit pas être défait remonte dans la dernière section.
 
 ## Décisions à trancher
 
-- **Fonctions de l'ancienne version restant à trancher** (proposé le
-  07/10/2026) : catégories repliables (un clic sur le titre masque les tuiles
-  de la catégorie) et couleur de catégorie. Réponse de l'utilisateur
-  incomplète le 07/10/2026 (« pas touché aux… », phrase coupée) : à
-  reconfirmer. Un import de l'ancien fichier ignore ces champs sans erreur.
+- **Couleur de catégorie** (choix de la couleur du point devant le titre,
+  fonction de l'ancienne version) : non recréée. La demande de l'utilisateur
+  du 07/10/2026 (« une option couleur sable ») a été comprise comme le
+  **thème Sable**, livré. À confirmer si une couleur par catégorie est aussi
+  voulue.
 
 ## Chantiers restants (par priorité)
 
