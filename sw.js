@@ -33,5 +33,5 @@ self.addEventListener('fetch', e => {
       }
       return resp;
     }).catch(() => caches.match(e.request).then(c => c || caches.match('/SpeedDial/')))
-  );;
+  );
 });
