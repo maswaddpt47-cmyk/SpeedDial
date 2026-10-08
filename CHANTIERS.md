@@ -18,19 +18,15 @@ Aucune pour l'instant.
    (elle n'apparaît qu'après une sauvegarde faite depuis un autre appareil).
    Confirmés par l'utilisateur le 07/10/2026 : la sauvegarde manuelle et la
    liste de « Mes repos » (avec le token configuré).
-2. **Barre latérale masquée sous 820 px** : « Nouvelle catégorie »,
-   « Sauvegarde » et « Mes repos » sont inaccessibles sur téléphone en
-   portrait (le bouton « + Catégorie » de l'en-tête a été retiré à la demande
-   de l'utilisateur le 07/10/2026).
-3. **Glisser-déposer au toucher** : le glisser-déposer natif du navigateur ne
+2. **Glisser-déposer au toucher** : le glisser-déposer natif du navigateur ne
    marche en général pas sur mobile ; non testé sur téléphone.
-4. **Jeton GitHub en `localStorage`** (clé `speeddial_modern_v1_gh_token`) sur
+3. **Jeton GitHub en `localStorage`** (clé `speeddial_modern_v1_gh_token`) sur
    l'origine `maswaddpt47-cmyk.github.io`, **partagée** avec les autres
    applis du compte : une faille d'injection dans l'une d'elles peut le lire.
    Atténué : jeton à grain fin, limité au dépôt de sauvegarde (Contents
    lecture/écriture), avec expiration à renouveler et à recoller sur chaque
    appareil.
-5. **Mineur RGPD** : les favicons passent par `google.com/s2/favicons` (le
+4. **Mineur RGPD** : les favicons passent par `google.com/s2/favicons` (le
    domaine de chaque tuile est transmis à Google). Pas de solution retenue.
 
 ## Points à ne pas défaire
