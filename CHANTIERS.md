@@ -36,13 +36,10 @@ Aucune pour l'instant.
   demande « option couleur sable » concernait le thème Sable, livré.
 - **Compteur de visites : ne pas le recréer** (décision de l'utilisateur,
   07/10/2026). Le champ \`visits\` d'un ancien fichier est ignoré.
-- **Aucun nom de compte GitHub en dur** dans l'application (retiré le
-  07/10/2026) : le dépôt de sauvegarde est saisi par l'utilisateur, et « Mes
-  repos » en déduit le propriétaire.
-- **Aucune donnée personnelle dans un repo public ni dans le code** : les
-  sauvegardes partent vers un dépôt **privé** dédié (`speeddial-backups`, passé
-  en privé le 07/10/2026 après avoir été public un moment : l'historique de
-  ses fichiers a pu être vu), et `DEFAULT` démarre vide (catégorie « Général »).
+- **Dépôt de sauvegarde par défaut en dur** (`GH_REPO_DEFAULT` dans le gabarit) :
+  voulu par l'utilisateur le 13/10/2026, qui annule le retrait du 07/10/2026
+  (saisie jugée inutile). Une valeur saisie dans « Sauvegarde » reste
+  prioritaire ; « Mes repos » en déduit le compte.
 - **Édition de `index.html`** : uniquement via la ligne JSON du gabarit
   (voir `CLAUDE.md`, section Architecture), échappement `<\u002F` obligatoire,
   aller-retour identique vérifié. Un `</script>` brut casse le dépaquetage.

@@ -24,7 +24,7 @@
 - Pour modifier l'application : décoder cette ligne (`json.loads`), remplacer le texte voulu (assertion `count == 1`), ré-encoder avec `json.dumps(t, ensure_ascii=False).replace('</', '<\\u002F')`, puis vérifier qu'un aller-retour sur l'original donne une ligne identique.
 - Composant `Component extends DCLogic` : `renderVals()` fournit les valeurs au gabarit (`sc-if`, `sc-for`, `sc-camel-on-<évènement>`). L'ancienne version vanilla de `index.html` reste dans l'historique git (commit `79346d7`).
 - `sw.js` : réseau d'abord, cache de secours hors ligne. Incrémenter `CACHE` (actuellement `speeddial-v4`) à chaque changement de logique du service worker.
-- Aucune URL personnelle en dur : `DEFAULT` démarre avec une catégorie « Général » vide.
+- Aucun raccourci personnel en dur : `DEFAULT` démarre avec une catégorie « Général » vide. Seul le dépôt de sauvegarde (`GH_REPO_DEFAULT`) est en dur, par choix de l'utilisateur.
 
 ## Données (localStorage)
 
