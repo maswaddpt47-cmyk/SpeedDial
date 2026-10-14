@@ -35,6 +35,7 @@
 ## Fonctions
 
 - Tuiles : bouton ✎ toujours visible, étoile cliquable (désépingle), capture d'écran (JPEG ≤ 400×240), glisser-déposer (réordonner / changer de catégorie), recherche par nom, URL ou catégorie.
+- Barre du haut (recherche, Éditer, Liste, « + Raccourci ») fixe au défilement : l'ajout d'une tuile reste toujours accessible.
 - Sous 820 px la barre latérale est masquée : le bouton « Menu » (barre du haut) ouvre les mêmes actions (catégorie, thème, export/import, sauvegarde, repos).
 - Catégories repliables (clic sur le titre ou le chevron). Thèmes Sombre, Clair et Sable (variables CSS `[data-theme]`).
 - Vues : Grille (6 colonnes ≥ 1200 px, 4/3/2 en dessous), Liste et Compact (2 colonnes ≥ 800 px).
