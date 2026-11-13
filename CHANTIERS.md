@@ -1,6 +1,6 @@
 # CHANTIERS — SpeedDial
 
-État au **13/11/2026**, commit de référence `2283eb4` (`main`) avant le correctif Proton Pass.
+État au **13/11/2026 à 19:25**, commit de référence `5406af5` (`main`) : champ du token reconnu par Proton Pass, AGORA installée, `AGENTS.md` complété.
 
 Carnet de reprise : ce qu'une session sans historique doit savoir pour
 continuer. Mis à jour à chaque avancée, pas en fin de session. Une tâche
