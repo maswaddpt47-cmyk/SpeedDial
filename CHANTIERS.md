@@ -1,6 +1,6 @@
 # CHANTIERS — SpeedDial
 
-État au **13/11/2026 à 19:25**, commit de référence `5406af5` (`main`) : champ du token reconnu par Proton Pass, AGORA installée, `AGENTS.md` complété.
+État au **13/11/2026 à 19:25**, commit de référence `5406af5` (`main`) : champ du token reconnu par Proton Pass, AGORA installée, `AGENTS.md` complété. « Pull » du 13/11/2026 : règle 69 (champ de secret) ajoutée à `AGENTS.md` pour Codex.
 
 Carnet de reprise : ce qu'une session sans historique doit savoir pour
 continuer. Mis à jour à chaque avancée, pas en fin de session. Une tâche
