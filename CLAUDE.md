@@ -1,5 +1,9 @@
 # Règles de travail — SpeedDial
 
+Règles communes de collaboration : MD-LIB/collaboration.md, chargé
+automatiquement par MD-LIB/CLAUDE.md (04/11/2026). Ici, seulement ce qui est
+propre au projet.
+
 ## Avant toute intervention
 
 1. `git pull origin main` — obligatoire, sans exception, avant de toucher le moindre fichier.
