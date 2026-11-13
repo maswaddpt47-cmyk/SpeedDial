@@ -27,6 +27,7 @@ propre au projet.
 - `index.html` est un bundle auto-dépaquetant (« Bundled Page ») : runtime + React + ReactDOM + polices en base64, et l'application elle-même dans un `<script type="__bundler/template">` (une seule ligne JSON, ~ligne 382). Ne jamais l'éditer à la main.
 - Pour modifier l'application : décoder cette ligne (`json.loads`), remplacer le texte voulu (assertion `count == 1`), ré-encoder avec `json.dumps(t, ensure_ascii=False).replace('</', '<\\u002F')`, puis vérifier qu'un aller-retour sur l'original donne une ligne identique.
 - Composant `Component extends DCLogic` : `renderVals()` fournit les valeurs au gabarit (`sc-if`, `sc-for`, `sc-camel-on-<évènement>`). L'ancienne version vanilla de `index.html` reste dans l'historique git (commit `79346d7`).
+- Installable en appli (PWA) : le `<head>` du **gabarit** porte `<link rel="manifest">`, `theme-color`, `apple-touch-icon` et le script qui capte `beforeinstallprompt` (`window.__sdInstall`, évènement `sd-install-ready`) et enregistre `sw.js` sur `load` (jamais en `file://`). Le `<head>` extérieur de `index.html` est remplacé au dépaquetage : rien n'y sert. Icônes PNG `icon-192.png`, `icon-512.png`, `icon-maskable-512.png`, `apple-touch-icon.png` (tirées de `icon-512.svg`).
 - `sw.js` : réseau d'abord, cache de secours hors ligne. Incrémenter `CACHE` (actuellement `speeddial-v4`) à chaque changement de logique du service worker.
 - Aucun raccourci personnel en dur : `DEFAULT` démarre avec une catégorie « Général » vide. Seul le dépôt de sauvegarde (`GH_REPO_DEFAULT`) est en dur, par choix de l'utilisateur.
 
@@ -42,6 +43,7 @@ propre au projet.
 - Barre du haut (recherche, Éditer, Liste, « + Raccourci ») fixe au défilement : l'ajout d'une tuile reste toujours accessible.
 - Sous 820 px la barre latérale est masquée : le bouton « Menu » (barre du haut) ouvre les mêmes actions (catégorie, thème, export/import, sauvegarde, repos).
 - Catégories repliables (clic sur le titre ou le chevron). Thèmes Sombre, Clair et Sable (variables CSS `[data-theme]`).
+- Bouton « Installer l'appli » (barre latérale et Menu) : visible seulement quand le navigateur propose l'installation (Chrome, Edge, Android) ; disparaît après le choix. Sur iPhone : Partager → « Sur l'écran d'accueil ».
 - Vues : Grille (6 colonnes ≥ 1200 px, 4/3/2 en dessous), Liste et Compact (2 colonnes ≥ 800 px).
 - Champ « Token GitHub » dans un vrai `<form>` (identifiant fixe caché `speeddial-token-github`, `name="password"`, `autocomplete="current-password"`, bouton « Enregistrer le token » et touche Entrée sans rechargement) pour que Proton Pass le reconnaisse ; enregistrement aussi à chaque frappe. Ne pas le ressortir du formulaire.
 - Sauvegarde GitHub (bouton « Sauvegarde ») : dépôt **privé** dédié, token fine-grained limité à ce dépôt (Contents lecture/écriture), fichiers `backups/backup-AAAA-MM-JJ-HHMM.json`, envoi automatique 20 s après chaque modification, 30 jours conservés (le plus récent toujours gardé), restauration depuis la liste.
