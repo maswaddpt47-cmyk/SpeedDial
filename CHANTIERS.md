@@ -1,6 +1,6 @@
 # CHANTIERS — SpeedDial
 
-État au **07/10/2026**, commit de référence `b323a32` (`main`).
+État au **13/11/2026**, commit de référence `2283eb4` (`main`) avant le correctif Proton Pass.
 
 Carnet de reprise : ce qu'une session sans historique doit savoir pour
 continuer. Mis à jour à chaque avancée, pas en fin de session. Une tâche
@@ -45,6 +45,7 @@ Aucune pour l'instant.
   aller-retour identique vérifié. Un `</script>` brut casse le dépaquetage.
 - **`sw.js` en réseau d'abord** (cache v4) : le cache en priorité servait de
   vieilles versions après déploiement (constaté le 07/10/2026).
+- **Champ du token dans un `<form>`** (13/11/2026, même correctif que sms-mail-multi `b9ab2bf`) : sans formulaire, `name` ni `autocomplete`, Proton Pass ne propose pas le token. Garder l'identifiant caché hors écran par `left:-9999px`, pas `display:none`.
 - **Restauration GitHub** : remplace toutes les données locales, confirmation
   à conserver. L'alerte n'apparaît pas tant que des modifications locales ne
   sont pas encore envoyées (20 s).

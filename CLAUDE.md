@@ -39,6 +39,7 @@
 - Sous 820 px la barre latérale est masquée : le bouton « Menu » (barre du haut) ouvre les mêmes actions (catégorie, thème, export/import, sauvegarde, repos).
 - Catégories repliables (clic sur le titre ou le chevron). Thèmes Sombre, Clair et Sable (variables CSS `[data-theme]`).
 - Vues : Grille (6 colonnes ≥ 1200 px, 4/3/2 en dessous), Liste et Compact (2 colonnes ≥ 800 px).
+- Champ « Token GitHub » dans un vrai `<form>` (identifiant fixe caché `speeddial-token-github`, `name="password"`, `autocomplete="current-password"`, bouton « Enregistrer le token » et touche Entrée sans rechargement) pour que Proton Pass le reconnaisse ; enregistrement aussi à chaque frappe. Ne pas le ressortir du formulaire.
 - Sauvegarde GitHub (bouton « Sauvegarde ») : dépôt **privé** dédié, token fine-grained limité à ce dépôt (Contents lecture/écriture), fichiers `backups/backup-AAAA-MM-JJ-HHMM.json`, envoi automatique 20 s après chaque modification, 30 jours conservés (le plus récent toujours gardé), restauration depuis la liste.
 - Alerte « sauvegarde plus récente sur GitHub » (bannière Restaurer / Ignorer), vérifiée au chargement et au retour sur l'onglet.
 - « Mes repos » : importe en tuiles les repos du compte ayant GitHub Pages (hors archivés et hors noms contenant « backup »), en ignorant les URL déjà présentes.
