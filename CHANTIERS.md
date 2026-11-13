@@ -27,8 +27,7 @@ Aucune pour l'instant. Chaque décision à trancher est candidate à un bloc
    Atténué : jeton à grain fin, limité au dépôt de sauvegarde (Contents
    lecture/écriture), avec expiration à renouveler et à recoller sur chaque
    appareil.
-4. **Installation en appli à vérifier sur le téléphone** (13/11/2026) : testée seulement dans Chromium (manifeste sans erreur, service worker actif, aucune erreur d'installabilité, bouton simulé). Les icônes ont été rendues avec la police de secours du sandbox (le « S » n'est pas en Georgia).
-5. **Mineur RGPD** : les favicons passent par `google.com/s2/favicons` (le
+4. **Mineur RGPD** : les favicons passent par `google.com/s2/favicons` (le
    domaine de chaque tuile est transmis à Google). Pas de solution retenue.
 
 ## Points à ne pas défaire
@@ -49,7 +48,7 @@ Aucune pour l'instant. Chaque décision à trancher est candidate à un bloc
   vieilles versions après déploiement (constaté le 07/10/2026).
 - **Champ du token dans un `<form>`** (13/11/2026, même correctif que sms-mail-multi `b9ab2bf`) : sans formulaire, `name` ni `autocomplete`, Proton Pass ne propose pas le token. Garder l'identifiant caché hors écran par `left:-9999px`, pas `display:none`. Proton Pass propose bien le token : confirmé par
   l'utilisateur le 13/11/2026.
-- **Manifeste et enregistrement du service worker dans le gabarit** (13/11/2026) : depuis la refonte en bundle, ils avaient disparu et l'appli n'était plus installable. Le `<head>` extérieur est remplacé au dépaquetage : ne pas les y remettre.
+- **Manifeste et enregistrement du service worker dans le gabarit** (13/11/2026) : depuis la refonte en bundle, ils avaient disparu et l'appli n'était plus installable. Le `<head>` extérieur est remplacé au dépaquetage : ne pas les y remettre. Installation confirmée par l'utilisateur sur son Android le 13/11/2026. Icônes rendues avec la police de secours du sandbox (le « S » n'est pas en Georgia) : à refaire seulement si l'utilisateur le demande.
 - **Restauration GitHub** : remplace toutes les données locales, confirmation
   à conserver. L'alerte n'apparaît pas tant que des modifications locales ne
   sont pas encore envoyées (20 s).
