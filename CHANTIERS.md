@@ -9,7 +9,8 @@ ne doit pas être défait remonte dans la dernière section.
 
 ## Décisions à trancher
 
-Aucune pour l'instant.
+Aucune pour l'instant. Chaque décision à trancher est candidate à un bloc
+`AGORA.md` (AGORA installée le 13/11/2026, section « AGORA » de `CLAUDE.md`).
 
 ## Chantiers restants (par priorité)
 
@@ -45,7 +46,8 @@ Aucune pour l'instant.
   aller-retour identique vérifié. Un `</script>` brut casse le dépaquetage.
 - **`sw.js` en réseau d'abord** (cache v4) : le cache en priorité servait de
   vieilles versions après déploiement (constaté le 07/10/2026).
-- **Champ du token dans un `<form>`** (13/11/2026, même correctif que sms-mail-multi `b9ab2bf`) : sans formulaire, `name` ni `autocomplete`, Proton Pass ne propose pas le token. Garder l'identifiant caché hors écran par `left:-9999px`, pas `display:none`.
+- **Champ du token dans un `<form>`** (13/11/2026, même correctif que sms-mail-multi `b9ab2bf`) : sans formulaire, `name` ni `autocomplete`, Proton Pass ne propose pas le token. Garder l'identifiant caché hors écran par `left:-9999px`, pas `display:none`. Proton Pass propose bien le token : confirmé par
+  l'utilisateur le 13/11/2026.
 - **Restauration GitHub** : remplace toutes les données locales, confirmation
   à conserver. L'alerte n'apparaît pas tant que des modifications locales ne
   sont pas encore envoyées (20 s).

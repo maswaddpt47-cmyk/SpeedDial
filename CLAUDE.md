@@ -54,6 +54,40 @@ propre au projet.
 - Après déploiement, recharger de force (Ctrl+Maj+R) ; un ancien service worker peut servir une page en cache.
 - Tests : Playwright avec `executablePath: '/opt/pw-browsers/chromium'` sur `file://…/index.html`. Le réseau vers GitHub est bloqué dans le sandbox : simuler `api.github.com` avec `page.route`.
 
+## AGORA — contradiction avant décision (installée le 13/11/2026)
+
+Débats dans **`AGORA.md`** (racine) : règles de réponse, gabarit, cycle de
+relais. `MD-LIB/agora.md` n'est pas requis pour ouvrir un bloc ni y répondre.
+
+**Ouvrir un bloc dès qu'un de ces faits est constaté** (critères observables,
+pas un ressenti) :
+1. la décision ferme une porte : format de stockage (`localStorage`, fichier de
+   sauvegarde GitHub, export JSON), nouvelle dépendance, contrat entre modules ;
+2. deux options envisagées, une seule écrite, sans arbitrage extérieur ;
+3. trois itérations sans résolution sur le même problème ;
+4. proposition de défaire un existant dont la raison d'être n'est pas retrouvée ;
+5. la proposition contredit une note datée (`CLAUDE.md`, `CHANTIERS.md`) ;
+6. coût irréversible pour l'usager : perte de données locales, restauration qui
+   écrase, rupture de la PWA installée ;
+7. le changement touche un calcul ou un chiffre affiché, quelle que soit sa
+   taille ; contradicteur Codex, bloc ouvert avant la correction.
+
+Toute « décision à trancher » de `CHANTIERS.md` est candidate : dire en
+l'écrivant pourquoi on ouvre un bloc ou non.
+
+**Ne va pas à l'AGORA** : changement de rendu pur ; correctif localisé appuyé
+sur une preuve (sauf critère 7) ; tout ce qui se défait en un commit.
+
+**Contradicteur** : session Claude B pour les décisions courantes ; **Codex**
+pour la sécurité, le token GitHub, les données personnelles et le critère 7.
+
+**Claude soumet d'office**, sans demander : il écrit le bloc au moment du
+choix (pas après le code), le pousse sur `main` (`git pull --rebase origin
+main` avant), puis l'annonce en tête de message, ligne à part :
+`🔴 **⚖️ AGORA : critère N — <sujet>. Bloc AG-00N commité. → Dis « pull » à
+Codex.**` (ou la phrase de relais d'`AGORA.md` pour une session B).
+**L'AGORA ne bloque jamais** : le travail continue. L'utilisateur tranche.
+
 ## Reprise de session — CHANTIERS.md
 
 Lire **`CHANTIERS.md`** (racine) au démarrage : décisions à trancher, chantiers restants, points à ne pas défaire. Le mettre à jour à chaque avancée significative, pas en fin de session. Une tâche terminée en sort ; ce qui ne doit pas être défait remonte dans sa dernière section.
