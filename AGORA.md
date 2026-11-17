@@ -1,8 +1,8 @@
 # AGORA — SpeedDial
 
-Débats soumis à un **contradicteur** : une autre session Claude, ou Codex
-(OpenAI) pour la sécurité, l'authentification, les données personnelles et
-tout calcul affiché. Une session dépose ici une proposition ; le contradicteur,
+Débats soumis à un **contradicteur** : une autre session de la même IA, ou
+l'IA de l'autre éditeur (auteur Claude → Codex, auteur Codex → Claude) pour la
+sécurité, l'authentification, les données personnelles et tout calcul affiché. Une session dépose ici une proposition ; le contradicteur,
 sans le même contexte, lit les vrais fichiers et répond. L'utilisateur tranche.
 Quand soumettre : section « AGORA » de `CLAUDE.md`. `MD-LIB/agora.md` n'est
 pas requis pour ouvrir un bloc ni pour y répondre.
@@ -22,10 +22,10 @@ pas requis pour ouvrir un bloc ni pour y répondre.
   extrait de sauvegarde.
 
 **Le cycle** : une session dépose un bloc et le pousse sur `main`, puis
-l'annonce à l'utilisateur ; l'utilisateur dit « pull » à Codex (section
-« AGORA — ce que « pull » veut dire » de `AGENTS.md`) ou colle la phrase de
-relais dans une autre session Claude : « pull **maswaddpt47-cmyk/SpeedDial**,
-lis son `AGORA.md`, réponds à AG-00N, tu es la session B » ; le contradicteur
+l'annonce à l'utilisateur ; l'utilisateur dit « pull » au contradicteur
+(Codex : section « AGORA — ce que « pull » veut dire » de `AGENTS.md` ; Claude
+ou une session B : « pull **maswaddpt47-cmyk/SpeedDial**, lis son `AGORA.md`,
+réponds à AG-00N, tu es <Claude ou la session B> ») ; le contradicteur
 répond ; l'utilisateur tranche. **Aucune notification ne passe d'un outil ou
 d'un compte à l'autre** : le relais par l'utilisateur est obligatoire, c'est
 pourquoi l'AGORA ne bloque jamais le travail.
@@ -51,7 +51,7 @@ contrainte 1 appliquée au bloc, jamais de la série.
 **Auteur** : session <8 car. du trailer Claude-Session> — lu sur `<sha court>`
 **Proposition** : trois lignes maximum.
 **Critère déclencheur** : n° et lequel (section « AGORA » de `CLAUDE.md`).
-**Contradicteur** : Codex | session B
+**Contradicteur** : Codex | Claude | session B
 **Ce que ça engage** : ce qui serait coûteux à défaire.
 **Non vérifié par l'auteur** : le champ le plus important — dire où l'on est
 faible oriente le contradicteur.

@@ -53,6 +53,7 @@ propre au projet.
 ## Déploiement et tests
 
 - Déploiement par GitHub Actions (`.github/workflows/deploy.yml`) à chaque push sur `main`. Un échec « No artifacts named github-pages » est transitoire : relancer le workflow.
+- Ne jamais annoncer « en ligne » sans le ✅ du déploiement pour le SHA poussé (`MD-LIB/deploiement.md`, script `outils/attendre-deploiement.sh` ou contrôle GitHub équivalent).
 - Après déploiement, recharger de force (Ctrl+Maj+R) ; un ancien service worker peut servir une page en cache.
 - Tests : Playwright avec `executablePath: '/opt/pw-browsers/chromium'` sur `file://…/index.html`. Le réseau vers GitHub est bloqué dans le sandbox : simuler `api.github.com` avec `page.route`.
 
@@ -72,7 +73,7 @@ pas un ressenti) :
 6. coût irréversible pour l'usager : perte de données locales, restauration qui
    écrase, rupture de la PWA installée ;
 7. le changement touche un calcul ou un chiffre affiché, quelle que soit sa
-   taille ; contradicteur Codex, bloc ouvert avant la correction.
+   taille ; relu par l'IA de l'autre éditeur, bloc ouvert avant la correction.
 
 Toute « décision à trancher » de `CHANTIERS.md` est candidate : dire en
 l'écrivant pourquoi on ouvre un bloc ou non.
@@ -80,14 +81,16 @@ l'écrivant pourquoi on ouvre un bloc ou non.
 **Ne va pas à l'AGORA** : changement de rendu pur ; correctif localisé appuyé
 sur une preuve (sauf critère 7) ; tout ce qui se défait en un commit.
 
-**Contradicteur** : session Claude B pour les décisions courantes ; **Codex**
-pour la sécurité, le token GitHub, les données personnelles et le critère 7.
+**Contradicteur** : une autre session de la même IA pour les décisions
+courantes ; **l'IA de l'autre éditeur** pour la sécurité, le token GitHub, les
+données personnelles et le critère 7 : auteur Claude → relecteur Codex, auteur
+Codex → relecteur Claude (`MD-LIB/agora.md` §12).
 
 **Claude soumet d'office**, sans demander : il écrit le bloc au moment du
 choix (pas après le code), le pousse sur `main` (`git pull --rebase origin
 main` avant), puis l'annonce en tête de message, ligne à part :
-`🔴 **⚖️ AGORA : critère N — <sujet>. Bloc AG-00N commité. → Dis « pull » à
-Codex.**` (ou la phrase de relais d'`AGORA.md` pour une session B).
+`🔴 **⚖️ AGORA : critère N — <sujet>. Bloc AG-00N publié dans
+maswaddpt47-cmyk/SpeedDial. → Dis « pull » à <Codex ou Claude>.**`
 **L'AGORA ne bloque jamais** : le travail continue. L'utilisateur tranche.
 
 ## Reprise de session — CHANTIERS.md
