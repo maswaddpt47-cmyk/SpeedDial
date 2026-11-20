@@ -18,8 +18,9 @@ Aucune pour l'instant. Chaque décision à trancher est candidate à un bloc
    sandbox n'a pas accès à GitHub) : la bannière « sauvegarde plus récente »
    (elle n'apparaît qu'après une sauvegarde faite depuis un autre appareil).
    Aussi non vérifié sur le vrai GitHub (20/11/2026) : les messages d'erreur
-   401 / 403 / 404 et la sonde `GET /repos/<dépôt>` de la liste (testés avec
-   une fausse API seulement ; hypothèse non vérifiée : GitHub répond 200 à
+   403 / 404 et la sonde `GET /repos/<dépôt>` de la liste (testés avec
+   une fausse API seulement, sauf le 401 confirmé par l'utilisateur sur le
+   vrai GitHub le 21/11/2026 à 00:22 ; hypothèse non vérifiée : GitHub répond 200 à
    cette sonde avec un jeton limité à ce dépôt, Metadata étant accordé d'office).
    Confirmés par l'utilisateur le 07/10/2026 : la sauvegarde manuelle et la
    liste de « Mes repos » (avec le token configuré).
