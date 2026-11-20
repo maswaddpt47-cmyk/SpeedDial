@@ -1,6 +1,6 @@
 # CHANTIERS — SpeedDial
 
-État au **17/11/2026**, base `d0d8ad4` (`main`) relue par « pull » : précisions MD-LIB du 13 au 16/11 reportées (`AGENTS.md` : fin de tâche, règle 69 « bouton qui lance l'application », relecteur d'un autre éditeur ; annonce AGORA « publié dans <dépôt> » et rôles dans les deux sens ; rappel de déploiement dans `CLAUDE.md`). Champ du token déjà conforme à la règle 69 (aucun ancien `onclick`).
+État au **20/11/2026**, base `6b59330` (`main`) relue par « pull ». Messages d'erreur de la sauvegarde GitHub rendus exacts selon le code de GitHub (voir « Points à ne pas défaire »). Précisions MD-LIB du 13 au 16/11 déjà reportées (`AGENTS.md`, annonce AGORA, rappel de déploiement dans `CLAUDE.md`).
 
 Carnet de reprise : ce qu'une session sans historique doit savoir pour
 continuer. Mis à jour à chaque avancée, pas en fin de session. Une tâche
@@ -17,6 +17,10 @@ Aucune pour l'instant. Chaque décision à trancher est candidate à un bloc
 1. **Vérifier sur le vrai GitHub** (testé seulement avec une fausse API, le
    sandbox n'a pas accès à GitHub) : la bannière « sauvegarde plus récente »
    (elle n'apparaît qu'après une sauvegarde faite depuis un autre appareil).
+   Aussi non vérifié sur le vrai GitHub (20/11/2026) : les messages d'erreur
+   401 / 403 / 404 et la sonde `GET /repos/<dépôt>` de la liste (testés avec
+   une fausse API seulement ; hypothèse non vérifiée : GitHub répond 200 à
+   cette sonde avec un jeton limité à ce dépôt, Metadata étant accordé d'office).
    Confirmés par l'utilisateur le 07/10/2026 : la sauvegarde manuelle et la
    liste de « Mes repos » (avec le token configuré).
 2. **Glisser-déposer au toucher** : le glisser-déposer natif du navigateur ne
@@ -41,6 +45,15 @@ Aucune pour l'instant. Chaque décision à trancher est candidate à un bloc
   voulu par l'utilisateur le 13/10/2026, qui annule le retrait du 07/10/2026
   (saisie jugée inutile). Une valeur saisie dans « Sauvegarde » reste
   prioritaire ; « Mes repos » en déduit le compte.
+- **Erreurs de la sauvegarde GitHub exactes selon le code reçu** (20/11/2026) :
+  le 20/11/2026, « dépôt introuvable pour ce token » avait envoyé sur une
+  fausse piste alors que le jeton collé n'était pas celui du dépôt (proposé
+  par Proton Pass, celui d'une autre appli). 401 = jeton refusé, 404 = pas
+  d'accès au dépôt ou dépôt inexistant, 403 = droits insuffisants, autre =
+  `erreur <code>` (méthode `ghErr`). Pour la liste, un 404 sur `backups` ne
+  devient une erreur que si `GET /repos/<dépôt>` échoue aussi : sans cette
+  sonde, un dépôt encore vide afficherait à tort « pas d'accès » au premier
+  usage. Ne pas remettre un 404 qui retourne `[]` sans cette sonde.
 - **Édition de `index.html`** : uniquement via la ligne JSON du gabarit
   (voir `CLAUDE.md`, section Architecture), échappement `<\u002F` obligatoire,
   aller-retour identique vérifié. Un `</script>` brut casse le dépaquetage.
