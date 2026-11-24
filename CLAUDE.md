@@ -52,7 +52,7 @@ propre au projet.
 
 ## Déploiement et tests
 
-- Déploiement par GitHub Actions (`.github/workflows/deploy.yml`) à chaque push sur `main`. Un échec « No artifacts named github-pages » est transitoire : relancer le workflow.
+- Déploiement par GitHub Actions (`.github/workflows/deploy.yml`) à chaque push sur `main`, en deux tâches depuis le 24/11/2026 : `build` (envoi du paquet) puis `deploy` (publication), comme le modèle GitHub ; dans une seule tâche, « No artifacts named github-pages » revenait souvent (3 échecs sur 6 le 24/11/2026). Si l'erreur revient : relancer une fois le workflow.
 - Ne jamais annoncer « en ligne » sans le ✅ du déploiement pour le SHA poussé (`MD-LIB/deploiement.md`, script `outils/attendre-deploiement.sh` ou contrôle GitHub équivalent).
   Workflow propre au projet (`deploy.yml`, tâche `deploy`, étape « Deploy to GitHub Pages ») : le script de MD-LIB le détecte seul depuis le 24/11/2026 (`76cd340`), hook compris. À la main : `bash ../MD-LIB/outils/attendre-deploiement.sh . <sha>`.
 - Après déploiement, recharger de force (Ctrl+Maj+R) ; un ancien service worker peut servir une page en cache.
