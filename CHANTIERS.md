@@ -1,6 +1,6 @@
 # CHANTIERS — SpeedDial
 
-État au **24/11/2026**, base `0620185` (`main`), fin de session (règles 5 et 59 précisées dans MD-LIB). Relu par « pull » sur `946399b` (règle 78 ajoutée à `AGENTS.md`). Déploiement de `2441eb0` (documentation seule) en échec deux fois côté GitHub (« No artifacts named github-pages », githubstatus sans incident à 21:57) ; le site restait celui de `360eee2`, republié par le push suivant. Erreur 422 à la sauvegarde GitHub constatée par l'utilisateur le 24/11/2026 : cause non établie, voir chantier 1.
+État au **24/11/2026**, base `2b23791` (`main`, déploiement en deux tâches), fin de session (règles 5 et 59 précisées dans MD-LIB). Relu par « pull » sur `946399b` (règle 78 ajoutée à `AGENTS.md`). Déploiement de `2441eb0` (documentation seule) en échec deux fois côté GitHub (« No artifacts named github-pages », githubstatus sans incident à 21:57) ; le site restait celui de `360eee2`, republié par le push suivant. Erreur 422 à la sauvegarde GitHub constatée par l'utilisateur le 24/11/2026 : cause non établie, voir chantier 1.
 
 Carnet de reprise : ce qu'une session sans historique doit savoir pour
 continuer. Mis à jour à chaque avancée, pas en fin de session. Une tâche
@@ -84,6 +84,7 @@ Aucune pour l'instant. Chaque décision à trancher est candidate à un bloc
 - **Champ du token dans un `<form>`** (13/11/2026, même correctif que sms-mail-multi `b9ab2bf`) : sans formulaire, `name` ni `autocomplete`, Proton Pass ne propose pas le token. Garder l'identifiant caché hors écran par `left:-9999px`, pas `display:none`. Proton Pass propose bien le token : confirmé par
   l'utilisateur le 13/11/2026.
 - **Manifeste et enregistrement du service worker dans le gabarit** (13/11/2026) : depuis la refonte en bundle, ils avaient disparu et l'appli n'était plus installable. Le `<head>` extérieur est remplacé au dépaquetage : ne pas les y remettre. Installation confirmée par l'utilisateur sur son Android le 13/11/2026. Icônes rendues avec la police de secours du sandbox (le « S » n'est pas en Georgia) : à refaire seulement si l'utilisateur le demande.
+- **Déploiement en deux tâches** (`build` puis `deploy`, 24/11/2026, `5996d59`) : dans une seule tâche, « No artifacts named github-pages » faisait échouer un déploiement sur deux. Garder la tâche `deploy` et l'étape « Deploy to GitHub Pages » : le script de MD-LIB les reconnaît par ces noms.
 - **Restauration GitHub** : remplace toutes les données locales, confirmation
   à conserver. L'alerte n'apparaît pas tant que des modifications locales ne
   sont pas encore envoyées (20 s).
