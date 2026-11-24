@@ -1,6 +1,6 @@
 # CHANTIERS — SpeedDial
 
-État au **20/11/2026**, base `6b59330` (`main`) relue par « pull ». Messages d'erreur de la sauvegarde GitHub rendus exacts selon le code de GitHub (voir « Points à ne pas défaire »). Précisions MD-LIB du 13 au 16/11 déjà reportées (`AGENTS.md`, annonce AGORA, rappel de déploiement dans `CLAUDE.md`).
+État au **24/11/2026**, base `2ffbc25` (`main`) relue par « pull ». Erreur 422 à la sauvegarde GitHub constatée par l'utilisateur le 24/11/2026 : cause non établie, voir chantier 1.
 
 Carnet de reprise : ce qu'une session sans historique doit savoir pour
 continuer. Mis à jour à chaque avancée, pas en fin de session. Une tâche
@@ -14,7 +14,21 @@ Aucune pour l'instant. Chaque décision à trancher est candidate à un bloc
 
 ## Chantiers restants (par priorité)
 
-1. **Vérifier sur le vrai GitHub** (testé seulement avec une fausse API, le
+1. **Erreur 422 à « Sauvegarder maintenant » (24/11/2026) — cause non établie.**
+   Capture de l'utilisateur : « Sauvegarde impossible : erreur 422 », la liste
+   des sauvegardes (dernière : 24/11/2026 à 16:17) s'affichait normalement,
+   donc jeton et dépôt étaient bons. L'application ne montrait alors que le
+   code. Hypothèses non vérifiées : (a) le fichier de la minute existait déjà
+   et l'envoi est parti sans `sha` (GitHub répond 422 « sha wasn't supplied »),
+   par ex. deux enregistrements dans la même minute depuis deux appareils ou
+   onglets ; (b) une règle du dépôt de sauvegarde (protection de branche) ;
+   (c) autre. Le détail renvoyé par GitHub s'affiche désormais après le code
+   (`erreur 422 : <message>`) : demander à l'utilisateur le texte exact à la
+   prochaine occurrence. Une nouvelle tentative une minute plus tard change le
+   nom du fichier. Le dépôt privé n'est pas lisible depuis une session Claude
+   (accès non activé) : rien vérifié côté GitHub.
+
+2. **Vérifier sur le vrai GitHub** (testé seulement avec une fausse API, le
    sandbox n'a pas accès à GitHub) : la bannière « sauvegarde plus récente »
    (elle n'apparaît qu'après une sauvegarde faite depuis un autre appareil).
    Aussi non vérifié sur le vrai GitHub (20/11/2026) : les messages d'erreur
@@ -24,15 +38,15 @@ Aucune pour l'instant. Chaque décision à trancher est candidate à un bloc
    cette sonde avec un jeton limité à ce dépôt, Metadata étant accordé d'office).
    Confirmés par l'utilisateur le 07/10/2026 : la sauvegarde manuelle et la
    liste de « Mes repos » (avec le token configuré).
-2. **Glisser-déposer au toucher** : le glisser-déposer natif du navigateur ne
+3. **Glisser-déposer au toucher** : le glisser-déposer natif du navigateur ne
    marche en général pas sur mobile ; non testé sur téléphone.
-3. **Jeton GitHub en `localStorage`** (clé `speeddial_modern_v1_gh_token`) sur
+4. **Jeton GitHub en `localStorage`** (clé `speeddial_modern_v1_gh_token`) sur
    l'origine `maswaddpt47-cmyk.github.io`, **partagée** avec les autres
    applis du compte : une faille d'injection dans l'une d'elles peut le lire.
    Atténué : jeton à grain fin, limité au dépôt de sauvegarde (Contents
    lecture/écriture), avec expiration à renouveler et à recoller sur chaque
    appareil.
-4. **Mineur RGPD** : les favicons passent par `google.com/s2/favicons` (le
+5. **Mineur RGPD** : les favicons passent par `google.com/s2/favicons` (le
    domaine de chaque tuile est transmis à Google). Pas de solution retenue.
 
 ## Points à ne pas défaire
@@ -55,6 +69,13 @@ Aucune pour l'instant. Chaque décision à trancher est candidate à un bloc
   devient une erreur que si `GET /repos/<dépôt>` échoue aussi : sans cette
   sonde, un dépôt encore vide afficherait à tort « pas d'accès » au premier
   usage. Ne pas remettre un 404 qui retourne `[]` sans cette sonde.
+- **Lecture du `sha` sans cache avant d'écraser un fichier** (24/11/2026) :
+  l'API Contents répond `Cache-Control: private, max-age=60` (constaté en-tête
+  à l'appui) ; un `fetch` par défaut réutilise la réponse pendant 60 s
+  (constaté sur serveur local) et enverrait un `sha` périmé. Garder
+  `cache: 'no-store'` sur cette lecture. Défaut latent corrigé, non prouvé
+  comme cause du 422 du 24/11/2026. Les erreurs hors 401/403/404 affichent
+  aussi le texte `message` de GitHub (méthode `ghFail`).
 - **Édition de `index.html`** : uniquement via la ligne JSON du gabarit
   (voir `CLAUDE.md`, section Architecture), échappement `<\u002F` obligatoire,
   aller-retour identique vérifié. Un `</script>` brut casse le dépaquetage.
