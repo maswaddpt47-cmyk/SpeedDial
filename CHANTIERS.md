@@ -1,6 +1,6 @@
 # CHANTIERS — SpeedDial
 
-État au **24/11/2026**, base `946399b` (`main`) relue par « pull » (règle 78 ajoutée à `AGENTS.md`). Déploiement de `2441eb0` (documentation seule) en échec deux fois côté GitHub (« No artifacts named github-pages », githubstatus sans incident à 21:57) ; le site restait celui de `360eee2`, republié par le push suivant. Erreur 422 à la sauvegarde GitHub constatée par l'utilisateur le 24/11/2026 : cause non établie, voir chantier 1.
+État au **24/11/2026**, base `0620185` (`main`), fin de session (règles 5 et 59 précisées dans MD-LIB). Relu par « pull » sur `946399b` (règle 78 ajoutée à `AGENTS.md`). Déploiement de `2441eb0` (documentation seule) en échec deux fois côté GitHub (« No artifacts named github-pages », githubstatus sans incident à 21:57) ; le site restait celui de `360eee2`, republié par le push suivant. Erreur 422 à la sauvegarde GitHub constatée par l'utilisateur le 24/11/2026 : cause non établie, voir chantier 1.
 
 Carnet de reprise : ce qu'une session sans historique doit savoir pour
 continuer. Mis à jour à chaque avancée, pas en fin de session. Une tâche
