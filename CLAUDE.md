@@ -54,7 +54,7 @@ propre au projet.
 
 - Déploiement par GitHub Actions (`.github/workflows/deploy.yml`) à chaque push sur `main`. Un échec « No artifacts named github-pages » est transitoire : relancer le workflow.
 - Ne jamais annoncer « en ligne » sans le ✅ du déploiement pour le SHA poussé (`MD-LIB/deploiement.md`, script `outils/attendre-deploiement.sh` ou contrôle GitHub équivalent).
-  Workflow propre au projet : le hook de MD-LIB attend le déploiement automatique de Pages et répond « ➖ non vérifié » ici (constaté le 24/11/2026). Vérifier avec : `bash ../MD-LIB/outils/attendre-deploiement.sh . <sha> .github/workflows/deploy.yml deploy "Deploy to GitHub Pages"` (✅ obtenu ainsi pour `360eee2`).
+  Workflow propre au projet (`deploy.yml`, tâche `deploy`, étape « Deploy to GitHub Pages ») : le script de MD-LIB le détecte seul depuis le 24/11/2026 (`76cd340`), hook compris. À la main : `bash ../MD-LIB/outils/attendre-deploiement.sh . <sha>`.
 - Après déploiement, recharger de force (Ctrl+Maj+R) ; un ancien service worker peut servir une page en cache.
 - Tests : Playwright avec `executablePath: '/opt/pw-browsers/chromium'` sur `file://…/index.html`. Le réseau vers GitHub est bloqué dans le sandbox : simuler `api.github.com` avec `page.route`.
 
