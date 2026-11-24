@@ -1,6 +1,6 @@
 # CHANTIERS — SpeedDial
 
-État au **24/11/2026**, base `2ffbc25` (`main`) relue par « pull ». Erreur 422 à la sauvegarde GitHub constatée par l'utilisateur le 24/11/2026 : cause non établie, voir chantier 1.
+État au **24/11/2026**, base `946399b` (`main`) relue par « pull » (règle 78 ajoutée à `AGENTS.md`). Erreur 422 à la sauvegarde GitHub constatée par l'utilisateur le 24/11/2026 : cause non établie, voir chantier 1.
 
 Carnet de reprise : ce qu'une session sans historique doit savoir pour
 continuer. Mis à jour à chaque avancée, pas en fin de session. Une tâche

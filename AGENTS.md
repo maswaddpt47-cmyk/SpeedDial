@@ -69,6 +69,7 @@ plateforme (le signaler une fois, puis continuer le reste).
   **✅ TÂCHE TERMINÉE**. Si un traitement reste en cours ou bloque la livraison,
   préciser son état sans annoncer la tâche terminée. La tâche est le travail
   du message, même si l’objectif d’ensemble reste ouvert (13/11/2026).
+- Au début d'une tâche et si sa nature change, indiquer en une ligne le modèle le plus économe adapté à son exécution (gamme et niveau de réflexion), avec la raison (règle 78 de `collaboration.md`).
 
 ## Décisions, preuves et périmètre
 
